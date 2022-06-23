@@ -1,7 +1,7 @@
-from holter_comands import *
 from abc import ABCMeta, abstractmethod
-from holter_comands import *
-from enlace import *
+from infraestructura.interop.holter_comands import *
+from infraestructura.interop.holter_responses import *
+from infraestructura.interop.enlace import *
 import time
 
 

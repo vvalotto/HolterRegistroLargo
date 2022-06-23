@@ -42,3 +42,9 @@ class MonitorECG(AbsECG):
     @state.setter
     def state(self,value):
         self._state = value
+
+
+class SignalEKG(AbsECG):
+    
+    def __init__(self, RegisterEKG: RegistroECG, EventsEKG:EventosECG):
+        super().__init__()

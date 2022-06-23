@@ -73,9 +73,9 @@ class ObserverMonitorDTO(AbsObserver):
         self.ploter = ploter
         self.ploter_2 = ploter_2
         self.ploter_3 = ploter_3
-        self.ploter._channel_1 = self._ecg_monitor._channel_1
-        self.ploter_2._channel_1 = self._ecg_monitor._channel_2
-        self.ploter_3._channel_1 = self._ecg_monitor._channel_3
+        self.ploter._channel_1 = self._ecg_monitor.channel_1
+        self.ploter_2._channel_1 = self._ecg_monitor.channel_2
+        self.ploter_3._channel_1 = self._ecg_monitor.channel_3
 
     def update(self, subject: MonitoreoSubjet) -> None:
         print("ConcreteObserverA: Reacted to the event")
