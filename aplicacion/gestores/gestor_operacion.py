@@ -20,6 +20,23 @@ class GestorOperacion:
         event_monitor.set()     
         print ('fin del ciclo de adquisición')
 
-    def preparar_holter_para_monitoreo(self):
-        self._invocador.ejecutar("poner_hora")
-        self._invocador.ejecutar("poner_configuracion")
+    def preparar_holter_para_monitoreo(self): # cambiar nombre a configurar holter
+        
+        time_set = self._invocador.ejecutar("poner_hora")
+        if time_set:
+            print ("Se configuró la hora correctamente")
+        else: 
+            print ("NO pudo configurarse la hora correctamente")
+
+        config_set = self._invocador.ejecutar("poner_configuracion")
+
+        if config_set:
+            print ("Se configuró el holter correctamente")
+        else: 
+            print ("NO pudo configurarse el holter correctamente")
+
+    def start_logging_mode(self):
+        self._invocador.ejecutar("poner_modo_logging")
+    
+    def erase_holter_memory (self):
+        self._invocador.ejecutar ("borrar_memoria_holter")

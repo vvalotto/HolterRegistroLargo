@@ -89,7 +89,19 @@ class DeviceConnectorMode(QObject):
     def holter_connect(self, flag):
         self._flag = flag
         if flag:
+            gestor_operacion.preparar_holter_para_monitoreo()
             gestor_vinculo.obtener_status_holter()
+            gestor_vinculo.parar_holter()
+            gestor_operacion.start_logging_mode()
+            gestor_vinculo.obtener_status_holter()
+            time.sleep(3)
+            gestor_vinculo.parar_holter()
+            gestor_vinculo.set_download_mode()
+            gestor_vinculo.obtener_status_holter()
+            time.sleep(3)
+            gestor_operacion.erase_holter_memory()
+            gestor_vinculo.obtener_status_holter()
+
         else:
             gestor_vinculo.parar_holter()
 
@@ -153,6 +165,8 @@ def print_monitor(monitor_subjet,lock_monitor, event_monitor):
     while (monitor_ecg.state):
         event_monitor.wait()
         with lock_monitor:
+            if  not monitor_ecg.state: # puede ser que esté de más.
+                break
             monitor_subjet.some_business_logic() # directamente puede ser notify
             event_monitor.clear()
 

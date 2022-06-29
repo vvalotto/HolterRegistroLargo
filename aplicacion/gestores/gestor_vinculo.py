@@ -26,5 +26,8 @@ class GestorVinculo:
     def parar_holter(self): # modo IDLE
         self._invocador.ejecutar("parar_modo_holter")
 
+    def set_download_mode(self):
+        self._invocador.ejecutar ("poner_modo_descarga")
+
     def desenlazar_holter(self):
         self._invocador.ejecutar("desenlazar_holter")

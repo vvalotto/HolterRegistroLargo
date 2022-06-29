@@ -22,7 +22,7 @@ class InvocatorInit:
                                             comando,
                                             RespuestaHolterStatus()))
 
-# Configurar Holter
+# Leer Configuración Holter
         self._invocador.registrar_comando("leer_configuracion",   LectorConfiguracionHolter(self._holter_connected_to, 
                                                     ComandoLecturaConfiguracionEnvio(), 
                                                     RespuestaHolterConfiguracion()))
@@ -47,6 +47,30 @@ class InvocatorInit:
                                                     ComandEmpty(),
                                                     RespuestaHolterEscritiuraOK()))
 
+# Poner holter en hora
+        self._invocador.registrar_comando("poner_hora",    SetHolterTime (self._holter_connected_to, 
+                                                    CommandWriteTime(),
+                                                    RespuestaHolterEscritiuraOK()))
+
+# Poner Configuración del holter
+        self._invocador.registrar_comando("poner_configuracion",    SetHolterConfig (self._holter_connected_to, 
+                                                    CommandWriteConfig(),
+                                                    RespuestaHolterEscritiuraOK()))
+
+# Poner Modo Logging (iniciar registro)
+        self._invocador.registrar_comando("poner_modo_logging",    SetLoggingMode (self._holter_connected_to, 
+                                                    CommandLoggingMode(),
+                                                    RespuestaHolterEscritiuraOK()))
+
+# Poner Modo Download
+        self._invocador.registrar_comando("poner_modo_descarga",    SetDownloadMode (self._holter_connected_to, 
+                                                    CommandDownloadMode(),
+                                                    RespuestaHolterEscritiuraOK()))
+
+# Borrar la memoria // si o sí tiene que estar en modo download
+        self._invocador.registrar_comando("borrar_memoria_holter",    EraseHolterMemory (self._holter_connected_to, 
+                                                    CommandEraseMemory(),
+                                                    RespuestaHolterEscritiuraOK()))
     @property
     def invocador (self):
         return self._invocador
@@ -54,47 +78,3 @@ class InvocatorInit:
     @invocador.setter
     def invocador (self, value):
         self._invocador = value
-
-def init_invocator(connection_type):#->str('USB_CONNECTION'):
-
-    if connection_type == 'USB_CONNECTION':
-        connection_type = EnlaceUSB()
-
-    if connection_type == 'DONGLE_CONNECTION':
-        connection_type = EnlaceDongle()    
-
-    holter_connected_to = Destinatario (connection_type)    
-
-    invocador = Invocador()
-   
-# Leer Status Holter
-    comando = ComandoLecturaStatusEnvio()
-    invocador.registrar_comando("leer_estado", LectorStatusHolter(holter_connected_to, 
-                                            comando,
-                                            RespuestaHolterStatus()))
-
-# Configurar Holter
-    invocador.registrar_comando("leer_configuracion",   LectorConfiguracionHolter(holter_connected_to, 
-                                                    ComandoLecturaConfiguracionEnvio(), 
-                                                    RespuestaHolterConfiguracion()))
-
-# Parar Holter
-    invocador.registrar_comando("parar_modo_holter",    SetIdleMode(holter_connected_to, 
-                                                    ComandoEscrituraModoIdleEnvio(),
-                                                    RespuestaHolterEscritiuraOK()))
-
-# Poner Modo Monitoreo
-    invocador.registrar_comando("poner_modo_monitoreo", PonerModoMonitoreo(holter_connected_to, 
-                                                    ComandoEscrituraModoMonitoreoEnvio(),
-                                                    RespuestaHolterEscritiuraOK()))
-
-# Obtener ECG Monitoreo
-    invocador.registrar_comando("obtener_ecg_monitoreo",GetECGMonitor(holter_connected_to, 
-                                                    ComandEmpty(),
-                                                    RespuestaHolterEGCMonitoreo()))
-
-# desenlazar_holter
-    invocador.registrar_comando("desenlazar_holter",    HolterDisconnect (holter_connected_to, 
-                                                    ComandEmpty(),
-                                                    RespuestaHolterEscritiuraOK()))
-    return invocador

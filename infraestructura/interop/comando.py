@@ -37,7 +37,7 @@ class LectorStatusHolter(AbsComando):
         if not self.is_expected_response(paquete_recibido):
             self._destinatario.desenlazar()
             return
-        # # # self._respuesta.desarmar_respuesta(paquete_recibido)
+        self._respuesta.desarmar_respuesta(paquete_recibido)
         # # # self._destinatario.desenlazar()
         return
         
@@ -75,12 +75,62 @@ class ObtenerEGC(AbsComando):
     pass
 
 
-class PonerHora(AbsComando):
-    pass
+class SetHolterTime(AbsComando):
+    
+    def ejecutar(self):
+        self._comando.armar_comando()
+        self._destinatario.conectar()
+        self._destinatario.enviar(self._comando.paquete)
+        configuracion = self._destinatario.recibir(1)
+        if configuracion == [False]:
+            self._destinatario.desenlazar()
+            return
+        self._respuesta.desarmar_respuesta(configuracion)
+        return self._respuesta.authenticate_response()
+
+
+class SetHolterConfig(AbsComando):
+    
+    def ejecutar(self):
+        self._comando.armar_comando()
+        self._destinatario.conectar()
+        self._destinatario.enviar(self._comando.paquete)
+        configuracion = self._destinatario.recibir(1)
+        if configuracion == [False]:
+            self._destinatario.desenlazar()
+            return
+        self._respuesta.desarmar_respuesta(configuracion)
+        return self._respuesta.authenticate_response()
 
 
 class PonerModo(AbsComando):
     pass
+
+
+class SetLoggingMode(AbsComando):
+    def ejecutar(self):
+        self._comando.armar_comando()
+        self._destinatario.conectar()
+        self._destinatario.enviar(self._comando.paquete)
+        configuracion = self._destinatario.recibir(1)
+        if configuracion == [False]:
+            self._destinatario.desenlazar()
+            return
+        self._respuesta.desarmar_respuesta(configuracion)
+        return self._respuesta.authenticate_response()
+
+
+class SetDownloadMode(AbsComando):
+    def ejecutar(self):
+        self._comando.armar_comando()
+        self._destinatario.conectar()
+        self._destinatario.enviar(self._comando.paquete)
+        configuracion = self._destinatario.recibir(1)
+        if configuracion == [False]:
+            self._destinatario.desenlazar()
+            return
+        self._respuesta.desarmar_respuesta(configuracion)
+        return self._respuesta.authenticate_response()
 
 
 class PonerModoMonitoreo(AbsComando):
@@ -120,12 +170,18 @@ class GetECGMonitor(AbsComando):
         return self._respuesta.desarmar_respuesta(datos_ecg_monitoreo)
 
 
-class PonerConfiguracion(AbsComando):
-    pass
-
-
-class BorrarMemoria(AbsComando):
-    pass
+class EraseHolterMemory(AbsComando):
+    def ejecutar(self):
+        self._comando.armar_comando()
+        self._destinatario.conectar()
+        self._destinatario.enviar(self._comando.paquete)
+        configuracion = self._destinatario.recibir(1)
+        if configuracion == [False]:
+            self._destinatario.desenlazar()
+            print ("Error. La memoria no pudo borrarse.")
+            return
+        self._respuesta.desarmar_respuesta(configuracion)
+        return self._respuesta.authenticate_response()
 
 
 class HolterDisconnect(AbsComando):

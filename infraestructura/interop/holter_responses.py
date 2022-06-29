@@ -1,4 +1,5 @@
 from abc import ABCMeta, abstractmethod
+from datetime import datetime
 
 class RespuestaHolter(metaclass=ABCMeta):
     
@@ -51,6 +52,7 @@ class RespuestaHolterStatus(RespuestaHolter):
 
     def desarmar_respuesta(self, datos):
         self._desarmar_paquete(datos)
+        self._print_status()
         return self._payload
 
     def authenticate_response (self):
@@ -58,6 +60,13 @@ class RespuestaHolterStatus(RespuestaHolter):
 
     def guardar_estado(self):
         return self._datos
+
+    def _print_status(self):
+        modo = ["Idle", "Monitoring", "Logging", "Download"]
+        print("Modo " + modo[self._datos[9]])
+        date_and_time = datetime(self._datos[8] + 2000, self._datos[7], self._datos[6], self._datos[4], self._datos[3], self._datos[2], 0)
+        print(date_and_time.strftime("Fecha y Hora: %d-%m-%Y %H:%M:%S"))
+        print(f"Batería al {self._datos[10]}%")
 
 
 class RespuestaHolterConfiguracion(RespuestaHolter):

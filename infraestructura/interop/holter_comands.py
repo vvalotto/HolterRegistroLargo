@@ -1,4 +1,6 @@
 from abc import ABCMeta, abstractmethod
+from datetime import timedelta, datetime
+import numpy as np
 
 class ComandoHolter(metaclass=ABCMeta):
     PACKAGE_LENGTH = 13
@@ -72,4 +74,85 @@ class ComandoEscrituraModoMonitoreoEnvio(ComandoHolter):
         self._header = b'\xa5'
         self._type = b'\x81'
         self._payload = b'\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00'
+        self._armar_paquete()
+
+
+class CommandWriteTime(ComandoHolter):
+    
+    def armar_comando(self, payload=None):
+        self._header = b'\xa5'
+        self._type = b'\x80'
+        self._payload = b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+
+        actual_time = datetime.now()
+
+        seconds = actual_time.second.to_bytes(1, 'big')
+        minutes = actual_time.minute.to_bytes(1, 'big')
+        hour = actual_time.hour.to_bytes(1, 'big')
+        date = actual_time.date().isocalendar()[2].to_bytes(1, 'big')
+        day = actual_time.day.to_bytes(1, 'big')
+        month = actual_time.month.to_bytes(1, 'big')
+        year = (actual_time.year-2000).to_bytes(1, 'big')
+        empty = b'\x00'
+
+        self._payload = seconds +\
+                        minutes + \
+                        hour + \
+                        date + \
+                        day + \
+                        month + \
+                        year + \
+                        empty + \
+                        empty +\
+                        empty
+
+
+        self._armar_paquete()
+
+
+class CommandWriteConfig(ComandoHolter):
+    
+    STUDY_TIME = 7200  # minutes // QUE SEA ATRIBUTO DE LA ENTIDAD "ESTUDIO"
+
+    def armar_comando(self, payload=None):
+        self._header = b'\xa5'
+        self._type = b'\x82'
+        self._payload = bytearray(b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00')
+
+        endtime = datetime.now() + timedelta(minutes = self.STUDY_TIME)
+
+        self._payload[0] = 3
+        self._payload[1] = 0
+        self._payload[2] = 0
+        self._payload[3] = 0
+        self._payload[4] = endtime.minute
+        self._payload[5] = endtime.hour
+        self._payload[6] = endtime.day
+
+        self._armar_paquete()
+
+
+class CommandLoggingMode(ComandoHolter):
+    
+    def armar_comando(self, payload=None):
+        self._header = b'\xa5'
+        self._type = b'\x81'
+        self._payload = b'\x00\x00\x00\x00\x00\x00\x00\x02\x00\x00'
+        self._armar_paquete()
+
+
+class CommandDownloadMode(ComandoHolter):
+    
+    def armar_comando(self, payload=None):
+        self._header = b'\xa5'
+        self._type = b'\x81'
+        self._payload = b'\x00\x00\x00\x00\x00\x00\x00\x03\x00\x00'
+        self._armar_paquete()
+
+class CommandEraseMemory(ComandoHolter):
+
+    def armar_comando(self, payload = None):
+        self._header = b'\xa5'
+        self._type = b'\x90'
+        self._payload = b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
         self._armar_paquete()
