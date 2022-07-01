@@ -13,7 +13,7 @@ class AbsComando(metaclass=ABCMeta):
         self._respuesta = respuesta
 
     @abstractmethod
-    def ejecutar(self):
+    def ejecutar(self, payload_data = None):
         pass
 
     def is_expected_response(self,response):
@@ -28,7 +28,7 @@ class AbsComando(metaclass=ABCMeta):
 
 class LectorStatusHolter(AbsComando):
 
-    def ejecutar(self):
+    def ejecutar(self, payload_data = None):
         # Lee estatus del holter
         self._comando.armar_comando()
         self._destinatario.conectar()
@@ -44,7 +44,7 @@ class LectorStatusHolter(AbsComando):
 
 class LectorConfiguracionHolter(AbsComando):
 
-    def ejecutar(self):
+    def ejecutar(self, payload_data = None):
         # lee Configuracion del holter
         self._comando.armar_comando()
         self._destinatario.conectar()
@@ -77,7 +77,7 @@ class ObtenerEGC(AbsComando):
 
 class SetHolterTime(AbsComando):
     
-    def ejecutar(self):
+    def ejecutar(self, payload_data = None):
         self._comando.armar_comando()
         self._destinatario.conectar()
         self._destinatario.enviar(self._comando.paquete)
@@ -91,8 +91,8 @@ class SetHolterTime(AbsComando):
 
 class SetHolterConfig(AbsComando):
     
-    def ejecutar(self):
-        self._comando.armar_comando()
+    def ejecutar(self, payload_data = None): # arreglar la abstracta : config = None
+        self._comando.armar_comando(payload_data)
         self._destinatario.conectar()
         self._destinatario.enviar(self._comando.paquete)
         configuracion = self._destinatario.recibir(1)
@@ -108,7 +108,8 @@ class PonerModo(AbsComando):
 
 
 class SetLoggingMode(AbsComando):
-    def ejecutar(self):
+
+    def ejecutar(self, payload_data = None):
         self._comando.armar_comando()
         self._destinatario.conectar()
         self._destinatario.enviar(self._comando.paquete)
@@ -121,7 +122,8 @@ class SetLoggingMode(AbsComando):
 
 
 class SetDownloadMode(AbsComando):
-    def ejecutar(self):
+
+    def ejecutar(self, payload_data = None):
         self._comando.armar_comando()
         self._destinatario.conectar()
         self._destinatario.enviar(self._comando.paquete)
@@ -134,7 +136,7 @@ class SetDownloadMode(AbsComando):
 
 
 class PonerModoMonitoreo(AbsComando):
-    def ejecutar(self):
+    def ejecutar(self, payload_data = None):
         # Activar modo monitoreo
         self._comando.armar_comando()
         self._destinatario.conectar()
@@ -162,7 +164,7 @@ class PonerModoMonitoreo(AbsComando):
 
 
 class GetECGMonitor(AbsComando):
-    def ejecutar(self):
+    def ejecutar(self, payload_data = None):
         print ('Datos de GetECG')
         datos_ecg_monitoreo = self._destinatario.recibir(10)
         # if not self.is_expected_response(datos_ecg_monitoreo):
@@ -171,7 +173,7 @@ class GetECGMonitor(AbsComando):
 
 
 class EraseHolterMemory(AbsComando):
-    def ejecutar(self):
+    def ejecutar(self, payload_data = None):
         self._comando.armar_comando()
         self._destinatario.conectar()
         self._destinatario.enviar(self._comando.paquete)
@@ -186,7 +188,7 @@ class EraseHolterMemory(AbsComando):
 
 class HolterDisconnect(AbsComando):
 
-    def ejecutar(self):
+    def ejecutar(self, payload_data = None):
         # response = self._destinatario.recibir(1)
         correct_response = self._respuesta.desarmar_respuesta(response)
         while (not correct_response):
@@ -197,7 +199,7 @@ class HolterDisconnect(AbsComando):
 
 class SetIdleMode(AbsComando):
     
-    def ejecutar(self):
+    def ejecutar(self, payload_data = None):
         # Activar modo idle y desenlazar holter
         self._comando.armar_comando()
 
@@ -272,9 +274,9 @@ class Invocador:
     def registrar_comando(self, nombre, comando):
         self._comandos[nombre] = comando
 
-    def ejecutar(self, nombre):
+    def ejecutar(self, nombre, payload_data = None):
         if nombre in self._comandos.keys():
-            recibido = self._comandos[nombre].ejecutar()
+            recibido = self._comandos[nombre].ejecutar(payload_data)
             return recibido
         else:
             raise 'Comando no reconocido'

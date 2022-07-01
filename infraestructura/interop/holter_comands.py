@@ -115,19 +115,29 @@ class CommandWriteConfig(ComandoHolter):
     STUDY_TIME = 7200  # minutes // QUE SEA ATRIBUTO DE LA ENTIDAD "ESTUDIO"
 
     def armar_comando(self, payload=None):
+        endtime = datetime.now() + timedelta(minutes = self.STUDY_TIME)
+
         self._header = b'\xa5'
         self._type = b'\x82'
         self._payload = bytearray(b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00')
+        if payload != None:
+            
+            endtime = payload[0] + timedelta(minutes = payload[1]) # asegurarse de que payload[0] sea tipo datetime
+            self._payload[0] = payload[2]
+            self._payload[1] = payload[3]
+            self._payload[2] = payload[4]
+            self._payload[3] = payload[5]
+            self._payload[4] = endtime.minute
+            self._payload[5] = endtime.hour
+            self._payload[6] = endtime.day
 
-        endtime = datetime.now() + timedelta(minutes = self.STUDY_TIME)
-
-        self._payload[0] = 3
-        self._payload[1] = 0
-        self._payload[2] = 0
-        self._payload[3] = 0
-        self._payload[4] = endtime.minute
-        self._payload[5] = endtime.hour
-        self._payload[6] = endtime.day
+        # self._payload[0] = 3
+        # self._payload[1] = 0
+        # self._payload[2] = 0
+        # self._payload[3] = 0
+        # self._payload[4] = endtime.minute
+        # self._payload[5] = endtime.hour
+        # self._payload[6] = endtime.day
 
         self._armar_paquete()
 
