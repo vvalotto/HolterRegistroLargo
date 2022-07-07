@@ -28,7 +28,7 @@ class GestorOperacion:
         else: 
             print ("NO pudo configurarse la hora correctamente")
 
-    def set_study_configuration(self, config):
+    def set_study_configuration(self, config=None):
 
         config_set = self._invocador.ejecutar("poner_configuracion", config)
 

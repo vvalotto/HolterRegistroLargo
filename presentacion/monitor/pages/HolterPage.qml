@@ -41,7 +41,8 @@ Item {
                     highlighted: false
                     flat: false
                     font.bold: false
-                    onClicked: connector.holter_connect(true)
+                    onClicked:{ connector.holter_connect(true)
+                                holterConnect.text = qsTr("Holter conectado")}
                 }
                 Button {
                     id: holterDisconnect
@@ -59,11 +60,11 @@ Item {
 
                 Image {
                     id: image
-                    x: 673
-                    y: 181
-                    width: 429
-                    height: 339
-                    source: "Captura.png"
+                    x: 693
+                    y: 188
+                    width: 273
+                    height: 284
+                    source: "holter.png"
                     
                     // fillMode: Image.PreserveAspectFit
                 }

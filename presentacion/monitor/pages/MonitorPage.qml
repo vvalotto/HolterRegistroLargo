@@ -307,7 +307,7 @@ Item {
                 }
                 Button {
                     id: initStudio
-                    text: qsTr("Iniciar Estudio")
+                    text: qsTr("Iniciar Registro")
                     height: 45
                     font.pixelSize: 14
                     font.italic: true
