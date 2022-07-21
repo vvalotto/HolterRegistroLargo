@@ -75,7 +75,7 @@ class EnlaceUSB(AbsEnlace, ABC):
             pass
 
         try:
-            self._puerto = serial.Serial('COM15',115200, timeout = 2)
+            self._puerto = serial.Serial('COM5',115200, timeout = 2)
             print ('Puerto enlazado')
         except:
             print ('Error para enlazar puerto. Puerto no enlazado')

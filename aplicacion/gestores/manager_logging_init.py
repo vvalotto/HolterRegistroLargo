@@ -23,6 +23,3 @@ class LoggingManager:
         self.study_manager.time_init_configuration()
         self.update_configuration_command()
         self.operation_manager.start_logging_mode()
-
-        
-

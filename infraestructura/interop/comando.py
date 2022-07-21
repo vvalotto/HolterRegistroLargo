@@ -243,7 +243,6 @@ class Destinatario:
             self._connected = False
             print ('Error de conexión. Intente nuevamente.')
 
-
     def enviar(self, paquete):
         self._tipo_vinculo.enviar(paquete)
 

@@ -4,14 +4,13 @@ from pathlib import Path
 import sys
 sys.path.append('../../')
 
-import time
 #from PySide6.QtGui import QGuiApplication hola
 from PySide6.QtQml import QQmlApplicationEngine
 from PySide6.QtCore import QObject, Slot, Signal, QPointF#, QTimer,
 from PySide6.QtWidgets import QApplication
 from PySide6.QtCharts import QAbstractSeries #, QDateTimeAxis
 
-from zmq import EVENT_CLOSE_FAILED
+# from zmq import EVENT_CLOSE_FAILED
 
 from aplicacion.gestores.gestor_vinculo import GestorVinculo
 from aplicacion.gestores.gestor_operacion import GestorOperacion
@@ -40,17 +39,26 @@ class Plotter(QObject):
     def __init__(self):
         super().__init__()
 
-        self._channel_1 = []
+        self._channel_1 = [] # Channel 1 = channel general
+        #generar buffer
         self._ADCmax = 0xF30000
         self._Vref = 2.4
         self._new_data = []
         self.__generate_buffer_data()
 
+
+    def filter(self):
+        #filtrar datos en self._channel_1
+        pass
+
     def data_update(self):
         self._new_data = []
+        #def filter
         for i in range (0, len(self._channel_1)):
             dato_int = self._channel_1[i][0]*65536+self._channel_1[i][1]*256+self._channel_1[i][2]
             dato = ((dato_int/self._ADCmax-0.5)*2*self._Vref/3.5)*1000
+
+
             self._new_data.append(QPointF(i,dato))
 
     def __generate_buffer_data(self, time_view = 1600):
@@ -132,10 +140,10 @@ monitor_ecg = MonitorDTO()
 
 """ Subjet and Observer """
 
-monitor_subjet = MonitoreoSubjet()
+monitor_subject = MonitoreoSubject()
 observer_a = ObserverMonitorDTO(monitor_ecg, ploter_1, ploter_2, ploter_3)
 
-monitor_subjet.attach(observer_a)
+monitor_subject.attach(observer_a)
 
 """ Invocador """
 link_usb = 'USB_CONNECTION'
@@ -179,7 +187,7 @@ def iniciar_monitoreo():
     lock_monitor = Lock()   
     t_1 = Thread(target=monitorear, args=(monitor_ecg, lock_monitor,
                                                         event_monitor), daemon=True)
-    t_2 = Thread(target=print_monitor, args=(monitor_subjet,lock_monitor,
+    t_2 = Thread(target=print_monitor, args=(monitor_subject,lock_monitor,
                                                         event_monitor),daemon=True)
     t_1.start()
     t_2.start()

@@ -5,7 +5,7 @@ from typing import List
 
 
 
-class AbsSubjet(ABC):
+class AbsSubject(ABC):
 
     """ Tema """
 
@@ -29,11 +29,11 @@ class AbsObserver(ABC):
     """ Observador """
 
     @abstractmethod
-    def update(self, subjet : AbsSubjet)-> None:
+    def update(self, subjet : AbsSubject)-> None:
         pass
 
 
-class MonitoreoSubjet(AbsSubjet):
+class MonitoreoSubject(AbsSubject):
 
     _state: int = None 
 
@@ -77,7 +77,7 @@ class ObserverMonitorDTO(AbsObserver):
         self.ploter_2._channel_1 = self._ecg_monitor.channel_2
         self.ploter_3._channel_1 = self._ecg_monitor.channel_3
 
-    def update(self, subject: MonitoreoSubjet) -> None:
+    def update(self, subject: MonitoreoSubject) -> None:
         print("ConcreteObserverA: Reacted to the event")
         print ('Vincular con el presentador')
         print ('OBSERVADOR')
