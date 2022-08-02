@@ -20,9 +20,9 @@ class GestorOperacion:
         event_monitor.set()     
         print ('fin del ciclo de adquisición')
 
-    def set_current_time(self): # cambiar nombre a configurar holter
+    def set_current_time(self, current_time): # cambiar nombre a configurar holter
         
-        time_set = self._invocador.ejecutar("poner_hora")
+        time_set = self._invocador.ejecutar("poner_hora", current_time)
         if time_set:
             print ("Se configuró la hora correctamente")
         else: 

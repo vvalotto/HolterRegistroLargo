@@ -14,7 +14,7 @@ from PySide6.QtCharts import QAbstractSeries #, QDateTimeAxis
 
 from aplicacion.gestores.gestor_vinculo import GestorVinculo
 from aplicacion.gestores.gestor_operacion import GestorOperacion
-
+from aplicacion.gestores.manager_logging_init import LoggingManager
 from infraestructura.interop import configurador_vinculo
 
 import time
@@ -57,8 +57,6 @@ class Plotter(QObject):
         for i in range (0, len(self._channel_1)):
             dato_int = self._channel_1[i][0]*65536+self._channel_1[i][1]*256+self._channel_1[i][2]
             dato = ((dato_int/self._ADCmax-0.5)*2*self._Vref/3.5)*1000
-
-
             self._new_data.append(QPointF(i,dato))
 
     def __generate_buffer_data(self, time_view = 1600):
@@ -85,8 +83,9 @@ class Plotter(QObject):
 
 
 class DeviceConnectorMode(QObject):
-    global gestor
+    global gestor_vinculo
     global monitor_ecg
+    global manager_logging_init
 
     def __init__(self, event) -> None:
         super().__init__()
@@ -97,6 +96,7 @@ class DeviceConnectorMode(QObject):
     def holter_connect(self, flag):
         self._flag = flag
         if flag:
+            manager_logging_init.logging_start()
             gestor_vinculo.parar_holter()
             # gestor_operacion.set_current_time()
             # gestor_operacion.set_study_configuration()
@@ -155,6 +155,10 @@ MonitorDTO.link_type = link_usb
 invocador_init = configurador_vinculo.InvocatorInit(link_usb)
 
 invocador = invocador_init.invocador
+
+""" Manager Logging Init """
+
+manager_logging_init = LoggingManager(invocador)
 
 """ Gestor de vínculo """
 

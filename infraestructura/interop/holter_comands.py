@@ -1,6 +1,6 @@
 from abc import ABCMeta, abstractmethod
-from datetime import timedelta, datetime
-import numpy as np
+import dateutil.parser
+from datetime import timedelta
 
 class ComandoHolter(metaclass=ABCMeta):
     PACKAGE_LENGTH = 13
@@ -79,12 +79,15 @@ class ComandoEscrituraModoMonitoreoEnvio(ComandoHolter):
 
 class CommandWriteTime(ComandoHolter):
     
-    def armar_comando(self, payload=None):
+    def armar_comando(self, current_time):
+        
+        actual_time = current_time
+        print (current_time, 'ARMAR COMANDO')
         self._header = b'\xa5'
         self._type = b'\x80'
         self._payload = b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
 
-        actual_time = datetime.now()
+        # actual_time = datetime.now()
 
         seconds = actual_time.second.to_bytes(1, 'big')
         minutes = actual_time.minute.to_bytes(1, 'big')
@@ -115,13 +118,15 @@ class CommandWriteConfig(ComandoHolter):
     STUDY_TIME = 7200  # minutes // QUE SEA ATRIBUTO DE LA ENTIDAD "ESTUDIO"
 
     def armar_comando(self, payload=None):
-        endtime = datetime.now() + timedelta(minutes = self.STUDY_TIME)
-
+        # endtime = datetime.now() + timedelta(minutes = self.STUDY_TIME)
         self._header = b'\xa5'
         self._type = b'\x82'
         self._payload = bytearray(b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00')
         if payload != None:
-            
+            # aux = datetime.strptime(payload[0], '%y-%m-%d %H:%M:%S')#2022-08-01 17:34:15.012371)
+            payload[0] = dateutil.parser.parse(payload[0])
+            print ('ACAAAA', type(payload[0]))
+            print (payload[0])
             endtime = payload[0] + timedelta(minutes = payload[1]) # asegurarse de que payload[0] sea tipo datetime
             self._payload[0] = payload[2]
             self._payload[1] = payload[3]

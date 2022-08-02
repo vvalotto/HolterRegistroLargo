@@ -77,8 +77,8 @@ class ObtenerEGC(AbsComando):
 
 class SetHolterTime(AbsComando):
     
-    def ejecutar(self, payload_data = None):
-        self._comando.armar_comando()
+    def ejecutar(self, current_time):
+        self._comando.armar_comando(current_time) # payload_data = hora actual 
         self._destinatario.conectar()
         self._destinatario.enviar(self._comando.paquete)
         configuracion = self._destinatario.recibir(1)
