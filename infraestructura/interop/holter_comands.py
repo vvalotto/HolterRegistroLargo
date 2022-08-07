@@ -125,9 +125,9 @@ class CommandWriteConfig(ComandoHolter):
         if payload != None:
             # aux = datetime.strptime(payload[0], '%y-%m-%d %H:%M:%S')#2022-08-01 17:34:15.012371)
             payload[0] = dateutil.parser.parse(payload[0])
-            print ('ACAAAA', type(payload[0]))
+            print ('str to datetime', type(payload[0]))
             print (payload[0])
-            endtime = payload[0] + timedelta(minutes = payload[1]) # asegurarse de que payload[0] sea tipo datetime
+            endtime = payload[0] + timedelta(minutes = payload[1])
             self._payload[0] = payload[2]
             self._payload[1] = payload[3]
             self._payload[2] = payload[4]
@@ -135,14 +135,6 @@ class CommandWriteConfig(ComandoHolter):
             self._payload[4] = endtime.minute
             self._payload[5] = endtime.hour
             self._payload[6] = endtime.day
-
-        # self._payload[0] = 3
-        # self._payload[1] = 0
-        # self._payload[2] = 0
-        # self._payload[3] = 0
-        # self._payload[4] = endtime.minute
-        # self._payload[5] = endtime.hour
-        # self._payload[6] = endtime.day
 
         self._armar_paquete()
 
@@ -163,6 +155,15 @@ class CommandDownloadMode(ComandoHolter):
         self._type = b'\x81'
         self._payload = b'\x00\x00\x00\x00\x00\x00\x00\x03\x00\x00'
         self._armar_paquete()
+
+
+class CommandMemoryInformation(ComandoHolter):
+    def armar_comando(self, payload = None):
+        self._header = b'\xa5'
+        self._type = b'\x62'
+        self._payload = b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+        self._armar_paquete()
+
 
 class CommandEraseMemory(ComandoHolter):
 

@@ -172,6 +172,20 @@ class GetECGMonitor(AbsComando):
         return self._respuesta.desarmar_respuesta(datos_ecg_monitoreo)
 
 
+class GetMemoryInformation(AbsComando):
+    def ejecutar(self, payload_data = None):
+        self._comando.armar_comando()
+        self._destinatario.conectar()
+        self._destinatario.enviar(self._comando.paquete)
+        information = self._destinatario.recibir(1)
+        if information == [False]:
+            self._destinatario.desenlazar()
+            print ("Error al obtener información de memoria.")
+            return
+        # self._respuesta.desarmar_respuesta(information)
+        return self._respuesta.desarmar_respuesta(information)
+
+
 class EraseHolterMemory(AbsComando):
     def ejecutar(self, payload_data = None):
         self._comando.armar_comando()

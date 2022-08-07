@@ -40,5 +40,9 @@ class GestorOperacion:
     def start_logging_mode(self):
         self._invocador.ejecutar("poner_modo_logging")
     
+    def get_memory_information(self):
+        amount_files = self._invocador.ejecutar ("informacion_memoria_holter")
+        return amount_files
+        
     def erase_holter_memory (self):
         self._invocador.ejecutar ("borrar_memoria_holter")

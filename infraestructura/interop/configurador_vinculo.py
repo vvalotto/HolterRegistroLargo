@@ -67,6 +67,11 @@ class InvocatorInit:
                                                     CommandDownloadMode(),
                                                     RespuestaHolterEscritiuraOK()))
 
+# Pedir información de memoria
+        self._invocador.registrar_comando("informacion_memoria_holter",    GetMemoryInformation (self._holter_connected_to, 
+                                                    CommandMemoryInformation(),
+                                                    RespuestaInformacionMemoria()))
+
 # Borrar la memoria // si o sí tiene que estar en modo download
         self._invocador.registrar_comando("borrar_memoria_holter",    EraseHolterMemory (self._holter_connected_to, 
                                                     CommandEraseMemory(),

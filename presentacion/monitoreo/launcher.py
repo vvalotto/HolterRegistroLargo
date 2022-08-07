@@ -113,7 +113,8 @@ class DeviceConnectorMode(QObject):
             # gestor_vinculo.obtener_status_holter()
 
         else:
-            gestor_vinculo.parar_holter()
+            # gestor_vinculo.parar_holter()
+            gestor_vinculo.desenlazar_holter()
 
     @property
     def flag(self):

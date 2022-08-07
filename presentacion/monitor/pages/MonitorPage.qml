@@ -3,8 +3,6 @@ import QtQuick.Controls
 import Qt5Compat.GraphicalEffects
 import QtCharts 2.3
 
-
-
 Item {
           
             Rectangle {

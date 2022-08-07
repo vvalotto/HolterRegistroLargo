@@ -130,6 +130,18 @@ class RespuestaHolterEscritiuraOK(RespuestaHolter):
         return self._correct_answer
 
 
+class RespuestaInformacionMemoria(RespuestaHolter):
+    
+    def desarmar_respuesta(self, datos):
+        
+        self._desarmar_paquete(datos)
+
+        if self._header == b'\x62':
+            number_files = self._datos[6]*256+self._datos[7]
+        
+        return number_files
+
+
 class RespuestaHolterBorrado(RespuestaHolter):
     pass
 
