@@ -79,16 +79,15 @@ class ComandoEscrituraModoMonitoreoEnvio(ComandoHolter):
 
 class CommandWriteTime(ComandoHolter):
     
-    def armar_comando(self, current_time):
+    def armar_comando(self, payload):
+        current_time = payload
         
         actual_time = current_time
         print (current_time, 'ARMAR COMANDO')
         self._header = b'\xa5'
         self._type = b'\x80'
         self._payload = b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
-
-        # actual_time = datetime.now()
-
+        # cambiar formato de asignación
         seconds = actual_time.second.to_bytes(1, 'big')
         minutes = actual_time.minute.to_bytes(1, 'big')
         hour = actual_time.hour.to_bytes(1, 'big')
@@ -154,6 +153,20 @@ class CommandDownloadMode(ComandoHolter):
         self._header = b'\xa5'
         self._type = b'\x81'
         self._payload = b'\x00\x00\x00\x00\x00\x00\x00\x03\x00\x00'
+        self._armar_paquete()
+
+
+class CommandDownloadFile(ComandoHolter):
+    def armar_comando(self, payload=None):
+        file_number = payload
+
+        self._header = b'\xa5'
+        self._type = b'\x66'
+        self._payload = bytearray (b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00')
+        
+        self._payload[2] =  int(file_number / 256)
+        self._payload[3] = (file_number - int(file_number / 256) * 256)
+        print (self._payload, len(self._payload))
         self._armar_paquete()
 
 

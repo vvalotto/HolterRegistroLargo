@@ -76,6 +76,22 @@ class InvocatorInit:
         self._invocador.registrar_comando("borrar_memoria_holter",    EraseHolterMemory (self._holter_connected_to, 
                                                     CommandEraseMemory(),
                                                     RespuestaHolterEscritiuraOK()))
+
+# Descargar un archivo
+        self._invocador.registrar_comando("descargar_archivo",    GetDownloadFile (self._holter_connected_to, 
+                                                    CommandDownloadFile(),
+                                                    RespuestaDescargaArchivo()))
+
+# Información de página de archivo
+        self._invocador.registrar_comando("informacion_pagina_archivo",    InformationFilePage (self._holter_connected_to, 
+                                                    ComandEmpty(),
+                                                    RespuestaDescargaInformacionPagina()))
+
+# Descarga datos de registro
+        self._invocador.registrar_comando("descargar_datos_registro",    DownloadRegisterData (self._holter_connected_to, 
+                                                    ComandEmpty(),
+                                                    RespuestaDownloadRegisterData()))
+
     @property
     def invocador (self):
         return self._invocador

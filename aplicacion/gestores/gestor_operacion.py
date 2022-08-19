@@ -46,3 +46,43 @@ class GestorOperacion:
         
     def erase_holter_memory (self):
         self._invocador.ejecutar ("borrar_memoria_holter")
+
+    def download_file(self, file_number):
+        self._invocador.ejecutar("descargar_archivo", file_number) # hora del archivo # en gestor download ?
+        samples_page = {}
+        bytes_page = {}
+        register_data = []
+        data = b''
+        payload = None
+        append_data = False
+        
+        while(True): # lectura por pagina, se suponen 64 ciclos (64 páginas)
+            information_file_page = self._invocador.ejecutar("informacion_pagina_archivo") # datos de la pagina
+            # la idea es guardar los bytes y muestras por pagina - lista de bytes por pagina
+            if (information_file_page == 'EOF') or (payload == 'EOF'):
+                break
+            if information_file_page!=None:
+                samples_page[information_file_page[0]] = information_file_page[1]
+                bytes_page[information_file_page[0]] = information_file_page[2]
+                
+                append_data = True
+                information_file_page = None
+
+            while(append_data):
+                
+                payload = self._invocador.ejecutar("descargar_datos_registro")
+                if payload == 'EOF':
+                    break
+                else:
+                    data = data + payload
+            
+            register_data.append(data)
+            data = b''
+            append_data = False
+
+        return register_data, samples_page, bytes_page
+            
+            # TODO: Pensar en un DTO y ENTIDAD. Mantener los datos en un lugar para que,
+            # llamando a otro método (almacenamiento/persistencia/save_csv) del gestor
+            # se guarden los datos en la estructura definida en archivos csv.
+        

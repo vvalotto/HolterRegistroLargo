@@ -63,10 +63,6 @@ class IdentificadorHolter(AbsComando):
     pass
 
 
-class ObtenerMemoria(AbsComando):
-    pass
-
-
 class ObtenerEventos(AbsComando):
     pass
 
@@ -81,11 +77,14 @@ class SetHolterTime(AbsComando):
         self._comando.armar_comando(current_time) # payload_data = hora actual 
         self._destinatario.conectar()
         self._destinatario.enviar(self._comando.paquete)
-        configuracion = self._destinatario.recibir(1)
-        if configuracion == [False]:
-            self._destinatario.desenlazar()
-            return
+        configuracion = self._destinatario.recibir(10)
         self._respuesta.desarmar_respuesta(configuracion)
+        while (not self._respuesta.authenticate_response()):
+            configuracion = self._destinatario.recibir(10)
+            self._respuesta.desarmar_respuesta(configuracion)
+            if configuracion == [False]:
+                self._destinatario.desenlazar()
+                return
         return self._respuesta.authenticate_response()
 
 
@@ -101,10 +100,6 @@ class SetHolterConfig(AbsComando):
             return
         self._respuesta.desarmar_respuesta(configuracion)
         return self._respuesta.authenticate_response()
-
-
-class PonerModo(AbsComando):
-    pass
 
 
 class SetLoggingMode(AbsComando):
@@ -133,6 +128,44 @@ class SetDownloadMode(AbsComando):
             return
         self._respuesta.desarmar_respuesta(configuracion)
         return self._respuesta.authenticate_response()
+
+
+class GetDownloadFile(AbsComando):
+    def ejecutar(self, payload_data = None):
+        self._comando.armar_comando(payload_data)
+        self._destinatario.conectar()
+        self._destinatario.enviar(self._comando.paquete)
+        file = self._destinatario.recibir(1)
+        
+        if file == [False]:
+            self._destinatario.desenlazar()
+            return None
+
+        file_contents = self._respuesta.desarmar_respuesta(file)
+        return file_contents
+
+
+class InformationFilePage(AbsComando):
+    def ejecutar(self, payload_data = None):
+        """
+        This method return three parameters without send any command.
+
+        Args:
+            payload_data (int, optional): _description_. Defaults to None.
+
+        Returns:
+            list: return a list with 3 elements: number of page, amount bytes and samples.
+        """
+        response = self._destinatario.recibir(1)
+        information_page = self._respuesta.desarmar_respuesta(response)
+        return information_page
+
+
+class DownloadRegisterData(AbsComando):
+    def ejecutar(self, payload_data = None):
+        response = self._destinatario.recibir(1)
+        data_payload = self._respuesta.desarmar_respuesta(response)
+        return data_payload
 
 
 class PonerModoMonitoreo(AbsComando):
@@ -203,11 +236,16 @@ class EraseHolterMemory(AbsComando):
 class HolterDisconnect(AbsComando):
 
     def ejecutar(self, payload_data = None):
-        # response = self._destinatario.recibir(1)
-        correct_response = self._respuesta.desarmar_respuesta(response)
+        # self._destinatario.conectar()
+        response = self._destinatario.recibir(1)
+        payload = self._respuesta.desarmar_respuesta(response)
+        correct_response = self._respuesta.authenticate_response()
+
         while (not correct_response):
             response = self._destinatario.recibir(1)
-            correct_response = self._respuesta.desarmar_respuesta(response)
+            payload = self._respuesta.desarmar_respuesta(response)
+            correct_response = self._respuesta.authenticate_response()
+
         self._destinatario.desenlazar()
 
 

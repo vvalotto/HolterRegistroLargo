@@ -16,7 +16,7 @@ class LoggingManager:
         self.operation_manager = GestorOperacion(self._invocador)
     
     def update_configuration_command(self,current_time):
-        config = self.study_manager.get_study_configuration(current_time)
+        config = self.study_manager.get_study_configuration(current_time, defect_config = True)
         self.operation_manager.set_study_configuration(config)
 
     def logging_start(self):

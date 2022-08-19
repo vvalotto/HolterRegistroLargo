@@ -7,14 +7,24 @@ class SignalManager:
     """Este gestor se encarga de administrar la transferencia de los datos
      y actualizaciones de los DTOs.
     """
-    def __init__(self, monitor_ecg, lock_monitor, event_monitor) -> None:
+    def __init__(self, signal_ecg, lock_monitor, event_monitor) -> None:
 
-        if monitor_ecg.type == 'monitor':
-            self._map_out = SignalMapper(monitor_ecg)
+        if signal_ecg.type == 'monitor':
+            self._mapper_signal = SignalMapper(signal_ecg)
         self._lock = lock_monitor
         self._event = event_monitor
 
+        if signal_ecg.type == 'register':
+            self._mapper_signal = SignalMapper(signal_ecg)
+
     def set_dto_channels(self, channels):
         with self._lock:
-            self._map_out.monitor_channels(channels)
+            self._mapper_signal.monitor_channels(channels)
             self._event.set()
+    
+    def save_register_channels(self, register_data, page_samples, page_bytes, file_number):
+        # mapper_signal podria tener un método que asigne register_data al atributo register_data del DTO, así 
+        # usarlo directamente desde el dto.
+        channels_not_decodified = self._mapper_signal.register_channels(self, register_data, page_samples, page_bytes)
+        self._mapper_signal.decode_register_channels(self, register_data, channels_not_decodified)
+        self._mapper_signal.save_data_csv(file_number)

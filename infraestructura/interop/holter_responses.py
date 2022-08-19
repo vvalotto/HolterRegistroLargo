@@ -1,10 +1,13 @@
 from abc import ABCMeta, abstractmethod
 from datetime import datetime
+from telnetlib import DO
+# from termios import TIOCPKT_DOSTOP
 
 class RespuestaHolter(metaclass=ABCMeta):
     
     PACKAGE_LENGTH = 13
     ANSWER_OK = b'\xa5\x0A\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xaf'
+    EOF = b'\xA5\x68\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xCD'
 
     @property
     def paquete(self):
@@ -127,7 +130,9 @@ class RespuestaHolterEscritiuraOK(RespuestaHolter):
         return self._payload
 
     def authenticate_response (self):
-        return self._correct_answer
+        correct_answer = self._correct_answer
+        # self._correct_answer = False #TODO: no se debería comentar - PERO monitoreo deja de funcionar si se utiliza.
+        return correct_answer
 
 
 class RespuestaInformacionMemoria(RespuestaHolter):
@@ -135,12 +140,58 @@ class RespuestaInformacionMemoria(RespuestaHolter):
     def desarmar_respuesta(self, datos):
         
         self._desarmar_paquete(datos)
-
+        number_files = None
         if self._header == b'\x62':
             number_files = self._datos[6]*256+self._datos[7]
-        
+        # number_files = self._datos[6]*256+self._datos[7]
+        print (number_files, 'memory info')
         return number_files
 
+
+class RespuestaDescargaArchivo(RespuestaHolter):
+    
+    def desarmar_respuesta(self, datos):
+        
+        self._desarmar_paquete(datos)
+        print ('header descarga archivo', self._header)
+        if self._header == b'\x67':
+            try:
+                date_and_time = datetime(datos[8] + 2000, datos[7], datos[6], datos[4], datos[3], datos[2], 0)
+                print(date_and_time.strftime("Fecha y Hora: %d-%m-%Y %H:%M:%S"))
+            except:
+                print("Fecha inválida")
+    
+        return self._payload
+
+
+class RespuestaDescargaInformacionPagina(RespuestaHolter):
+    
+    def desarmar_respuesta(self, datos):
+        self._desarmar_paquete(datos)
+        if self._datos == self.EOF:
+            return 'EOF'
+        if self._header != b'\x69':
+            print ('ERROR. Header de datos no reconocido')
+            return False
+
+        number_page = self._datos[2]
+        amount_samples = self._datos[4]*256+self._datos[3] 
+        # TODO: No esta como en el diagrama de secuencias. Sincronizar
+        amount_bytes = self._datos[6]*256+self._datos[5]
+        
+        return [number_page, amount_samples, amount_bytes]
+
+
+class RespuestaDownloadRegisterData(RespuestaHolter):
+    def desarmar_respuesta(self, datos):
+        self._desarmar_paquete(datos)
+        if self._datos == self.EOF:
+            return 'EOF'
+        if self._header == b'\x66':
+            return self._payload
+        else:
+            print ('ERROR. Header de datos no reconocido')
+            return False
 
 class RespuestaHolterBorrado(RespuestaHolter):
     pass

@@ -75,7 +75,7 @@ class EnlaceUSB(AbsEnlace, ABC):
             pass
 
         try:
-            self._puerto = serial.Serial('COM5',115200, timeout = 2)
+            self._puerto = serial.Serial('COM3',115200, timeout = 2)
             print ('Puerto enlazado')
         except:
             print ('Error para enlazar puerto. Puerto no enlazado')
@@ -123,7 +123,7 @@ class EnlaceDongle(AbsEnlace, ABC):
 
     def conectar(self):
         # Open the BLE Device and suppress spammy log messages
-        self._ble_device = BleDevice('COM11')
+        self._ble_device = BleDevice('COM5')
         self._ble_device.event_logger.suppress(nrf_events.GapEvtAdvReport)
         # Configure the BLE device to support MTU sizes which allow the max data length extension PDU size
         # Note this isn't 100% necessary as the default configuration sets the max to this value also
@@ -192,7 +192,7 @@ class EnlaceDongle(AbsEnlace, ABC):
     def recibir(self, amount_packages):
 
         try:
-            # print ('recibir', len(self._datos))
+            print ('recibir', len(self._datos))
             if not float.is_integer(len(self._datos)/self.PACKAGE_LENGTH):
                 print ('Se perdieron datos. Se reiniciará la conexión')
                 self.desconectar()

@@ -2,6 +2,7 @@
 import os
 from pathlib import Path
 import sys
+from telnetlib import DO
 sys.path.append('../../')
 
 #from PySide6.QtGui import QGuiApplication hola
@@ -15,9 +16,10 @@ from PySide6.QtCharts import QAbstractSeries #, QDateTimeAxis
 from aplicacion.gestores.gestor_vinculo import GestorVinculo
 from aplicacion.gestores.gestor_operacion import GestorOperacion
 from aplicacion.gestores.manager_logging_init import LoggingManager
+from aplicacion.gestores.manager_download import DownloadManager
 from infraestructura.interop import configurador_vinculo
 
-import time
+# import time
 from aplicacion.DTOs.monitor_DTO import MonitorDTO
 # from signal_EKG import MonitorECG
 
@@ -65,6 +67,7 @@ class Plotter(QObject):
     def refresh_buffer(self):
         self._buffer_data = self._buffer_data[len(self._new_data):]
         self._buffer_data.extend(self._new_data)
+        print (len(self._buffer_data))
 
         for point in range(len(self._buffer_data)):
             self._buffer_data[point].setX(point)
@@ -86,6 +89,7 @@ class DeviceConnectorMode(QObject):
     global gestor_vinculo
     global monitor_ecg
     global manager_logging_init
+    global manager_download
 
     def __init__(self, event) -> None:
         super().__init__()
@@ -113,8 +117,10 @@ class DeviceConnectorMode(QObject):
             # gestor_vinculo.obtener_status_holter()
 
         else:
-            # gestor_vinculo.parar_holter()
-            gestor_vinculo.desenlazar_holter()
+            gestor_vinculo.parar_holter()
+            # gestor_vinculo.desenlazar_holter()
+            # gestor_vinculo.set_download_mode()
+            # manager_download.start_download()
 
     @property
     def flag(self):
@@ -149,7 +155,7 @@ monitor_subject.attach(observer_a)
 """ Invocador """
 link_usb = 'USB_CONNECTION'
 # link_usb = 'DONGLE_CONNECTION'
-MonitorDTO.link_type = link_usb
+monitor_ecg.link_type = link_usb
 
 # invocador = configurador_vinculo.init_invocator(link_usb)
 
@@ -168,6 +174,9 @@ gestor_vinculo = GestorVinculo(invocador)
 """ Gestor de operación """
 
 gestor_operacion = GestorOperacion(invocador)
+
+""" Manager Download """
+manager_download = DownloadManager(invocador)
 
 def monitorear(monitor_ecg, lock_monitor,event_monitor):
 
