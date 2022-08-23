@@ -2,6 +2,8 @@
 import os
 from pathlib import Path
 import sys
+
+from ...dominio.servicios.procesamiento import BandpassMonitorFilter, NotchMonitorFilter
 sys.path.append('../../')
 
 #from PySide6.QtGui import QGuiApplication hola
@@ -47,17 +49,40 @@ class Plotter(QObject):
         self.__generate_buffer_data()
 
 
-    def filter(self):
-        #filtrar datos en self._channel_1
-        pass
+    ##LO SIGUIENTE VA DENTRO DE LA CLASE PLOTTER EN LAUNCHER (CAPA DE PRESENTACION)        
+    # def actualizar(self, chunk_ch1, chunk_ch2, chunk_ch3):
+    #     if FILTER:
+    #         chunk_ch1, chunk_ch2, chunk_ch3 = self.filtro.filtrar(chunk_ch1, 
+    #                                                               chunk_ch2, 
+    #                                                               chunk_ch3)
+    #     if NOTCH:
+    #         chunk_ch1, chunk_ch2, chunk_ch3 = self.notch.filtrar(chunk_ch1, 
+    #                                                              chunk_ch2, 
+    #                                                              chunk_ch3)
+    #     self.senial.ch1 = np.roll(self.senial.ch1, -CHUNK)
+    #     self.senial.ch2 = np.roll(self.senial.ch2, -CHUNK)
+    #     self.senial.ch3 = np.roll(self.senial.ch3, -CHUNK)
+        
+    #     self.senial.ch1[LENGTH-CHUNK:LENGTH] = chunk_ch1
+    #     self.senial.ch2[LENGTH-CHUNK:LENGTH] = chunk_ch2
+    #     self.senial.ch3[LENGTH-CHUNK:LENGTH] = chunk_ch3
 
     def data_update(self):
-        self._new_data = []
-        #def filter
+        BandpassMonitorFilter.__init__()
+        NotchMonitorFilter.__init__()
+        data_to_filter = []
+
         for i in range (0, len(self._channel_1)):
             dato_int = self._channel_1[i][0]*65536+self._channel_1[i][1]*256+self._channel_1[i][2]
             dato = ((dato_int/self._ADCmax-0.5)*2*self._Vref/3.5)*1000
-            self._new_data.append(QPointF(i,dato))
+            data_to_filter.append(dato)
+        
+        bandpass_filtered=BandpassMonitorFilter.filter(data_to_filter)
+        notch_filtered=NotchMonitorFilter.filter(bandpass_filtered)
+
+        for i in range(0,len(notch_filtered)):    
+            self._new_data.append(QPointF(i,notch_filtered[i]))
+        
 
     def __generate_buffer_data(self, time_view = 1600):
         self._buffer_data = [QPointF(i,0) for i in range(0,time_view)]
