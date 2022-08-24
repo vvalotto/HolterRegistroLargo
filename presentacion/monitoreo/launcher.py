@@ -3,8 +3,10 @@ import os
 from pathlib import Path
 import sys
 
-from ...dominio.servicios.procesamiento import BandpassMonitorFilter, NotchMonitorFilter
+
 sys.path.append('../../')
+
+from ...dominio.servicios.procesamiento import BandpassMonitorFilter, NotchMonitorFilter
 
 #from PySide6.QtGui import QGuiApplication hola
 from PySide6.QtQml import QQmlApplicationEngine
