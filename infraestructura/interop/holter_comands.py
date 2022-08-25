@@ -80,10 +80,10 @@ class ComandoEscrituraModoMonitoreoEnvio(ComandoHolter):
 class CommandWriteTime(ComandoHolter):
     
     def armar_comando(self, payload):
-        current_time = payload
         
+        current_time = payload        
         actual_time = current_time
-        print (current_time, 'ARMAR COMANDO')
+
         self._header = b'\xa5'
         self._type = b'\x80'
         self._payload = b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
@@ -124,8 +124,7 @@ class CommandWriteConfig(ComandoHolter):
         if payload != None:
             # aux = datetime.strptime(payload[0], '%y-%m-%d %H:%M:%S')#2022-08-01 17:34:15.012371)
             payload[0] = dateutil.parser.parse(payload[0])
-            print ('str to datetime', type(payload[0]))
-            print (payload[0])
+
             endtime = payload[0] + timedelta(minutes = payload[1])
             self._payload[0] = payload[2]
             self._payload[1] = payload[3]

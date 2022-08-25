@@ -72,13 +72,13 @@ Item {
                 anchors.fill: parent
             }
 
-            Image {
-                id: captura
-                x: 0
-                y: 0
-                source: "C:/Users/Santiago F/Desktop/Captura.PNG"
-                fillMode: Image.PreserveAspectFit
-            }
+            // Image {
+            //     id: captura
+            //     x: 0
+            //     y: 0
+            //     source: "C:/Users/Santiago F/Desktop/Captura.PNG"
+            //     fillMode: Image.PreserveAspectFit
+            // }
         }
 /*##^##
 Designer {

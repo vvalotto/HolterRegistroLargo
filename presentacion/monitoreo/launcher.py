@@ -67,7 +67,6 @@ class Plotter(QObject):
     def refresh_buffer(self):
         self._buffer_data = self._buffer_data[len(self._new_data):]
         self._buffer_data.extend(self._new_data)
-        print (len(self._buffer_data))
 
         for point in range(len(self._buffer_data)):
             self._buffer_data[point].setX(point)

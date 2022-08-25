@@ -106,7 +106,6 @@ class EnlaceUSB(AbsEnlace, ABC):
         try:
             if self._puerto.isOpen():
                 recibido = self._puerto.read(amount_bytes)
-                print ('TIPO DE DATO', type(recibido))
                 return recibido
             else:
                 print ('No se recibieron datos. Puerto no enlazado')
@@ -203,4 +202,3 @@ class EnlaceDongle(AbsEnlace, ABC):
     
     def on_data_rx(self, service, data):
         self._datos = data
-        print ('TIPO DE DATO', type(data))

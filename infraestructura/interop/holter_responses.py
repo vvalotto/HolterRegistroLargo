@@ -143,7 +143,6 @@ class RespuestaInformacionMemoria(RespuestaHolter):
         number_files = None
         if self._header == b'\x62':
             number_files = self._datos[6]*256+self._datos[7]
-        # number_files = self._datos[6]*256+self._datos[7]
         print (number_files, 'memory info')
         return number_files
 

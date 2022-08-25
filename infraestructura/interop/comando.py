@@ -49,7 +49,6 @@ class LectorConfiguracionHolter(AbsComando):
         self._comando.armar_comando()
         self._destinatario.conectar()
         self._destinatario.enviar(self._comando.paquete)
-        print(self._comando.paquete)
         configuracion = self._destinatario.recibir(1)
         if configuracion == [False]:
             self._destinatario.desenlazar()
