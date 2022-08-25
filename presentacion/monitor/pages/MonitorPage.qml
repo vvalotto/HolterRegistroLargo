@@ -152,8 +152,8 @@ Item {
                         ValuesAxis {
                             id: axisY
                             visible: true
-                            min: 3.4
-                            max: 4.1
+                            min: -1
+                            max: 1
                             // gridLineColor: 'red'
                             // shadesVisible: true
                         }
@@ -214,8 +214,8 @@ Item {
                         ValuesAxis {
                             id: axisY2
                             visible: true
-                            min: 3
-                            max: 4.7
+                            min: -1
+                            max: 1
                             // gridLineColor: 'red'
                             // shadesVisible: true
                         }
@@ -276,8 +276,8 @@ Item {
                         ValuesAxis {
                             id: axisY3
                             visible: true
-                            min: 6.0
-                            max: 6.8
+                            min: -1
+                            max: 1
                             // gridLineColor: 'red'
                             // shadesVisible: true
                         }
