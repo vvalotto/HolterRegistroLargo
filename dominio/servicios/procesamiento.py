@@ -4,64 +4,50 @@
 Monitor Holter
 
 """
-import matplotlib.pyplot as plt
-import matplotlib.animation as animation
 import numpy as np
-import threading
-import serial
-import argparse
-import time
 from scipy import signal
-from abc import abstractmethod, ABCMeta, ABC
-from datetime import date, datetime
+from abc import abstractmethod, ABC
 
-class ABSFilter(metaclass=ABCMeta):
-    def __init__(self):
-        self._f0 = None
-        self._n = None
-        self._fc1 = None
-        self._fc2 = None
-        self._num = None
-        self._den = None
-        self._q = None
-        self._fs= None
+class ABSFilter(ABC):
 
     @abstractmethod
     def filter():
         pass
 
-class BandpassMonitorFilter(ABSFilter,ABC):
+class BandpassMonitorFilter(ABSFilter):
     
-    #Parameter initializations 
-    _n = 4
-    _fc1 = 0.67
-    _fc2 = 40
-    _fs = 263
-    _num, _den = signal.butter(_n, [_fc1, _fc2], btype='bandpass', fs=_fs)       
-    
+    #Initialization
+    def __init__(self,fc1,fc2,fs,n): 
+        self.fc1 = fc1#0.67
+        self.fc2 = fc2#40
+        self.fs = fs#263
+        self.n = n#4
+        self.num, self.den = signal.butter(self.n, [self.fc1, self.fc2], btype='bandpass', fs=self.fs)       
+        #Transitory state array
+        self.tran_channel_1 = np.zeros(np.max([len(self.num), len(self.den)])-1)
+        
     def filter(self, channel_1):
         
-        #Transitory state array
-        self.tran_channel_1 = np.zeros(np.max([len(self._num), len(self._den)])-1)
-        
         #Channel by channel filtering 
-        self.channel_1_filt, self.tran_channel_1 = signal.lfilter(self._num, self._den, 
+        self.channel_1_filt, self.tran_channel_1 = signal.lfilter(self.num, self.den, 
                                                     channel_1, zi=self.tran_channel_1)
         
         return self.channel_1_filt
     
-class NotchMonitorFilter(ABSFilter,ABC):
-    _q = 30
-    _f0 = 20
-    _fs = 263
-    _num, _den = signal.iirnotch(_f0, _q, fs=_fs)
+class NotchMonitorFilter(ABSFilter):
+    
+    def __init__(self,q,f0,fs): 
+        self.q = q#30
+        self.f0 = f0#20
+        self.fs = fs#263
+        self.num, self.den = signal.iirnotch(self.f0, self.q, fs=self.fs)       
+        #Transitory state array    
+        self.tran_channel1 = np.zeros(np.max([len(self.num), len(self.den)])-1)
          
     def filtrar(self, channel_1):
-        #Transitory state array    
-        self.tran_channel1 = np.zeros(np.max([len(self._num), len(self._den)])-1)
-        
+
         #Channel filtering    
-        self.channel_1_filt, self.tran_channel_1 = signal.lfilter(self._num, self._den, 
+        self.channel_1_filt, self.tran_channel_1 = signal.lfilter(self.num, self.den, 
                                                     channel_1, zi=self.tran_channel_1)
         
         return self.channel_1_filt

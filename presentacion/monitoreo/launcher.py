@@ -70,8 +70,8 @@ class Plotter(QObject):
     #     self.senial.ch3[LENGTH-CHUNK:LENGTH] = chunk_ch3
 
     def data_update(self):
-        BandpassMonitorFilter.__init__()
-        NotchMonitorFilter.__init__()
+        band_pass_m=BandpassMonitorFilter(0.67,40,263,4)
+        notch_m=NotchMonitorFilter(30,20,263)
         data_to_filter = []
 
         for i in range (0, len(self._channel_1)):
@@ -79,8 +79,8 @@ class Plotter(QObject):
             dato = ((dato_int/self._ADCmax-0.5)*2*self._Vref/3.5)*1000
             data_to_filter.append(dato)
         
-        bandpass_filtered=BandpassMonitorFilter.filter(data_to_filter)
-        notch_filtered=NotchMonitorFilter.filter(bandpass_filtered)
+        bandpass_filtered=band_pass_m.filter(data_to_filter)
+        notch_filtered=notch_m.filter(bandpass_filtered)
 
         for i in range(0,len(notch_filtered)):    
             self._new_data.append(QPointF(i,notch_filtered[i]))
