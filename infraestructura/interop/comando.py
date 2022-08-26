@@ -39,11 +39,11 @@ class LectorStatusHolter(AbsComando):
             return
         self._respuesta.desarmar_respuesta(paquete_recibido)
         # # # self._destinatario.desenlazar()
-        return
-        
+        return    
+
 
 class LectorConfiguracionHolter(AbsComando):
-
+    
     def ejecutar(self, payload_data = None):
         # lee Configuracion del holter
         self._comando.armar_comando()
