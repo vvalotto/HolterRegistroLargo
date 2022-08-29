@@ -1,11 +1,11 @@
-from dominio.entidades.register import Register
-from aplicacion.DTOs.register_DTO import RegisterDTO
+from dominio.entidades.register import Register # no es necesaria la importación
+from aplicacion.DTOs.register_DTO import RegisterDTO # no es necesario la importación
 from infraestructura.persistencia.mapeadores.mapper import AbsMapper
 
 class RegisterDataMapper(AbsMapper):
 
-    def __init__(self, context):
-        self._context = context
+    def __init__(self): # , context):
+        # self._context = context
         self._entity = None
         self._dto_register_data = None
 

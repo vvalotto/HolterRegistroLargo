@@ -17,5 +17,5 @@ class GenericContext(metaclass=ABCMeta):
         self._resource = resource
 
     @property
-    def recurso(self):
-        return self._recurso
+    def resource(self):
+        return self._resource

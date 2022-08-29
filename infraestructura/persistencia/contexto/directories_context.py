@@ -18,7 +18,8 @@ class DirContext(GenericContext):
         self._resource = self._adapt_resourse(resource)
 
     def _adapt_resourse(self, resource):
-        date = parser.parse (resource[0])
-        amount_days = ceil((self.resource[1])/(24*60))
+        name = resource[0]
+        date = parser.parse (resource[1])
+        amount_days = ceil((self.resource[2])/(24*60))
     
-        return [date, amount_days]
+        return [name, date, amount_days]

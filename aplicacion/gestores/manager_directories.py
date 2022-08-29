@@ -29,6 +29,7 @@ class DirectoriesManager:
     def _get_study_data(self):
         
         self._information_study = self.study_manager.get_study_configuration(self._study)
+        return self._information_study
        
     def create_dir(self, name_study = 'Estudio Holter'):
         self._get_study_data()

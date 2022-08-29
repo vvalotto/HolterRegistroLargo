@@ -11,6 +11,8 @@ class DownloadManager:
         self._signal_dto = RegisterDTO()
         self._manager_signal = SignalManager(self._signal_dto, None, None) # Usar **kwargs
 
+        self._repository = None
+
     def start_download(self):
         amount_files = self._operation_manager.get_memory_information()
         # ahora se implementa el de descarga/captura de archivos
@@ -20,5 +22,10 @@ class DownloadManager:
         for file_number in range(amount_files):
             register_data, samples_page, bytes_page = self._operation_manager.download_file(file_number)
 
-            self._manager_signal.save_register_channels(register_data, samples_page, bytes_page, file_number) # podría ir en otro hilo - *observer*
+            self._repository.update()
 
+            self._manager_signal.save_register_channels(register_data, samples_page, bytes_page, file_number, repository) # podría ir en otro hilo - *observer*
+
+    def assign_repostory(self, repository):
+        self._repository = repository
+        return

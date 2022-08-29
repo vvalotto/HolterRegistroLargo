@@ -17,7 +17,7 @@ class SignalManager:
         if signal_ecg.type == 'register':
             self._mapper_signal = SignalMapper(signal_ecg)
 
-    def set_dto_channels(self, channels):
+    def set_dto_channels(self, channels, repository):
         with self._lock:
             self._mapper_signal.monitor_channels(channels)
             self._event.set()

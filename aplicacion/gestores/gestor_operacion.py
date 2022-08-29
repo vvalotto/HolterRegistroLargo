@@ -49,6 +49,7 @@ class GestorOperacion:
 
     def download_file(self, file_number):
         self._invocador.ejecutar("descargar_archivo", file_number) # hora del archivo # en gestor download ?
+        
         samples_page = {}
         bytes_page = {}
         register_data = []
