@@ -57,9 +57,11 @@ class DirectoriesManager:
     def _sub_dir_create(self):
         if self._dir_creted:
             amount_days = math.ceil((self._information_study[1])/(24*60))
-            for day in range(1, amount_days+1):
-                self._folder_path_days.append((self._folder_path + '/dia '+ str(day)))
-                os.mkdir(self._folder_path_days[day-1])
+            x = parser.parse(self._information_study[0])
+            for day in range(x.day , (x.day+ amount_days)):
+                self._folder_path_days.append(self._folder_path +'/'+ str(x.month)
+                                + '-' + str(day))
+                os.mkdir(self._folder_path_days[(day-x.day)])
 
     def select_location(self):
         root = tk.Tk()

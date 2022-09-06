@@ -7,7 +7,8 @@ class StudyMapper:
         print (current_time, 'STUDY MAPPER')
 
     def update_study_config(self, study):
-        with open('./study_configuration_data.json') as file:
+        # with open('./study_configuration_data.json') as file:
+        with open('D:\Repositorios\GitHub\HolterRegistroLargo\presentacion\monitoreo\study_configuration_data.json') as file:
             configuration = json.load(file)
             study.time_init = configuration['time_init']
             print ('UPDATE', study.time_init)

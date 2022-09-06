@@ -11,7 +11,7 @@ class RegisterDTO(AbsEKGDTO):
         self._channel_1 = []
         self._channel_2 = []
         self._channel_3 = []
-
+        self._channels_undecoded = []
         self._register_data = []
     
     @property
@@ -21,6 +21,13 @@ class RegisterDTO(AbsEKGDTO):
     def register_data(self, value):
         self._register_data = value
     
+    @property
+    def channels_undecoded(self):
+        return self._channels_undecoded
+    @channels_undecoded.setter
+    def channels_undecoded(self, value):
+        self._channels_undecoded = value
+
     @property
     def state(self):
         return self._state
@@ -51,4 +58,3 @@ class RegisterDTO(AbsEKGDTO):
     @channel_3.setter
     def channel_3(self, valor):
         self._channel_3 = valor
-

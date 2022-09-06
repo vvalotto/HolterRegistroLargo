@@ -31,6 +31,7 @@ class RespuestaHolter(metaclass=ABCMeta):
         return self._correct_answer
         
     def _obtener_checksum(self, datos):
+        print (len(datos), datos)
         checksum = 0
         for i in range(self.PACKAGE_LENGTH - 1):
             checksum ^= datos[i]
@@ -141,8 +142,9 @@ class RespuestaInformacionMemoria(RespuestaHolter):
         
         self._desarmar_paquete(datos)
         number_files = None
-        if self._header == b'\x62':
-            number_files = self._datos[6]*256+self._datos[7]
+        # if self._header == b'\x62':
+        #     number_files = self._datos[6]*256+self._datos[7]
+        number_files = self._datos[6]*256+self._datos[7]
         print (number_files, 'memory info')
         return number_files
 
@@ -159,8 +161,8 @@ class RespuestaDescargaArchivo(RespuestaHolter):
                 print(date_and_time.strftime("Fecha y Hora: %d-%m-%Y %H:%M:%S"))
             except:
                 print("Fecha inválida")
-    
-        return self._payload
+        
+        return date_and_time
 
 
 class RespuestaDescargaInformacionPagina(RespuestaHolter):

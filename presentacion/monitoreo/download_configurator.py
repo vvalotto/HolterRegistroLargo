@@ -1,6 +1,8 @@
 """
 Clase que inicializa la configuración de descarga.
 """
+import sys
+sys.path.append('../../')
 
 from aplicacion.gestores.manager_download import DownloadManager
 from aplicacion.gestores.gestor_operacion import GestorOperacion
@@ -19,18 +21,15 @@ class DownloadConfigurator:
         # Datos del estudio
         self._study = StudyEKG()
         self._study_manager = StudyManager(self._study)
-        information_study = self._study_manager.get_study_configuration()
+        study_information = self._study_manager.get_study_configuration()
         # Inicialización de repositorio y creación de directorios
-        resource = ['Holter Bagó', information_study [0], information_study [1]]
-        repository_of_download = SignalRegisterRepository(DirContext(resource), RegisterDataMapper())
-        repository_of_download.create() 
+        resource = ['Holter Bago', study_information [0], study_information [1]]
+        download_repository = SignalRegisterRepository(DirectoryContext(resource), RegisterDataMapper())
+        # download_repository.create() 
         # Vínculo con dispositivo Holter
         self._gestor_vinculo = GestorVinculo(invocator)
         self._gestor_vinculo.set_download_mode()
         # Inicio de proceso de descarga por archivo
         self._manager_download = DownloadManager(invocator)
-        self._manager_download.assign_repostory(repository_of_download)
+        self._manager_download.assign_repostory(download_repository)
         self._manager_download.start_download()
-
-
-       

@@ -9,7 +9,7 @@ class Register(AbsEKGEntity):
         self._channel_1 = []
         self._channel_2 = []
         self._channel_3 = []
-
+        self._channels_undecoded = []
         self._register_data = []
     
     @property

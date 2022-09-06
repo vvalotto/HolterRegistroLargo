@@ -10,7 +10,7 @@ class StudyManager:
         self._study = study
         self._study_mapper = StudyMapper()
     
-    def get_study_configuration(self, current_time, defect_config = False):
+    def get_study_configuration(self, current_time = None, defect_config = False):
         if defect_config:
             self._study_mapper.defect_study_config(current_time) # Sería un set_study_config.. puede/debe estar en otro método
         

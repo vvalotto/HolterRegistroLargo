@@ -315,7 +315,6 @@ class Invocador:
     @link_type.setter
     def link_type(self, value):
         self._link_type = value
-
         
     def __init__(self):
         self._comandos = {}
