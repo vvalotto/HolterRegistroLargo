@@ -23,34 +23,39 @@ class DownloadManager:
         # se debe pedir de a un archivo. para esto se envia a armar 
         # comando el dato del nro de archivo que se pide
 
-        for file_number in range(amount_files):
+        for file_number in range(1,amount_files): # TODO: Luego de corregir el firmware se debe sumar uno a amount_files
+            # El dispositivo comienza a entregar los archivos desde el nro 1
             # adquiere los datos de un archivo desde el dispositivo
             # Hora del archivo
+            print (file_number, 'NUMERO DE ARCHIVO')
             file_date = self._operation_manager.get_file_time(file_number)
             # Datos por página de archivo
             samples_page = {}
             bytes_page = {}
             register_data = []
-            payload = None        
+            datos = None    
+            information_file_page = None
             while(True): # lectura por pagina, se suponen 64 ciclos (64 páginas)
-                # information_file_page = self._operation_manager.get_information_file_page()
-                information_file_page = self._file_page_information()
-                # la idea es guardar los bytes y muestras por pagina - lista de bytes por pagina
-                if (information_file_page == 'EOF') or (payload == 'EOF'):
+                if (information_file_page == 'EOF') or (datos == 'EOF'):
                     break
+                information_file_page = self._file_page_information(datos)
+                # la idea es guardar los bytes y muestras por pagina - lista de bytes por pagina
                 if information_file_page!=None:
                     samples_page[information_file_page[0]] = information_file_page[1]
                     bytes_page[information_file_page[0]] = information_file_page[2]
-                    information_file_page = None
 
-                file_data, payload = self._operation_manager.download_files()
+                file_data, datos = self._operation_manager.download_files()
+                
+                # if information_file_page[0] != 0:
                 register_data.append(file_data)
             # Fin de uso del gestor de operación.
 
             # # # register_data, samples_page, bytes_page = self._operation_manager.download_file()
             
             # separador de canales sin decodificarlos
-
+            print (type (bytes_page))
+            print (len(bytes_page))
+            print (bytes_page)
             channels_undecoded = channel_splitter(register_data, samples_page, bytes_page) # Podría ser llamado por el gestor de señal.
             # decodificación de canales
             channels = decode_register_channels(register_data, channels_undecoded) # Podría ser llamado por el gestor de señal.
@@ -64,8 +69,8 @@ class DownloadManager:
 
             # self._manager_signal.save_register_channels(register_data, samples_page, bytes_page, file_number, self._repository) # podría ir en otro hilo - *observer*
 
-    def _file_page_information(self):
-        return self._operation_manager.get_information_file_page()
+    def _file_page_information(self, payload):
+        return self._operation_manager.get_information_file_page(payload)
 
     def _memory_information(self):
         return self._operation_manager.get_memory_information()

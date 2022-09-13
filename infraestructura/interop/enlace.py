@@ -45,10 +45,19 @@ class AbsEnlace(metaclass=ABCMeta):
         self._ble_device = None
 
     def listar_puertos_series(self):
+        print (comports)
         puertos = list(comports())
-        # for puerto in puertos:
-        #     print (puerto)
+        for puerto in puertos:
+            print (puerto, "puerto")
         return puertos
+
+# # # for port in serial.tools.list_ports.comports():
+# # #     if "0403:6001" in port.hwid:
+# # #         right_com = port.device
+
+# # # #Se abre la conexión hacia el puerto serial
+
+# # # dvk_bl654 = serial.Serial(right_com,115200,timeout=2)
 
     def nombre_puerto(puertos):
         try:
@@ -76,13 +85,17 @@ class EnlaceUSB(AbsEnlace, ABC):
 
         try:
             self._puerto = serial.Serial('COM8',115200, timeout = 2)
+            # print (self._puerto)
             print ('Puerto enlazado')
         except:
             print ('Error para enlazar puerto. Puerto no enlazado')
             pass
 
+        # self.listar_puertos_series()
+
     def desconectar(self):
         try:
+            self._puerto.reset_input_buffer()
             self._puerto.close()
             print('Puerto desenlazado')
         except:

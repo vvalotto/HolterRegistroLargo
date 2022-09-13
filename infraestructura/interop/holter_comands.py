@@ -163,8 +163,8 @@ class CommandDownloadFile(ComandoHolter):
         self._type = b'\x66'
         self._payload = bytearray (b'\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00')
         
-        self._payload[2] =  int(file_number / 256)
-        self._payload[3] = (file_number - int(file_number / 256) * 256)
+        self._payload[0] =  int(file_number / 256)
+        self._payload[1] = (file_number - int(file_number / 256) * 256)
         print (self._payload, len(self._payload))
         self._armar_paquete()
 

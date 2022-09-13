@@ -132,10 +132,10 @@ class SetDownloadMode(AbsComando):
 class GetDownloadFile(AbsComando):
     def ejecutar(self, payload_data = None):
         self._comando.armar_comando(payload_data)
-        self._destinatario.conectar()
+        # self._destinatario.conectar()
         self._destinatario.enviar(self._comando.paquete)
         file = self._destinatario.recibir(1)
-        
+        print (file, 'RECIBIR EN GETDOWNLOADFILE')
         if file == [False]:
             self._destinatario.desenlazar()
             return None
@@ -145,7 +145,7 @@ class GetDownloadFile(AbsComando):
 
 
 class InformationFilePage(AbsComando):
-    def ejecutar(self, payload_data = None):
+    def ejecutar(self, payload_data):
         """
         This method return three parameters without send any command.
 
@@ -155,7 +155,10 @@ class InformationFilePage(AbsComando):
         Returns:
             list: return a list with 3 elements: number of page, amount bytes and samples.
         """
-        response = self._destinatario.recibir(1)
+        if (payload_data == None) or (payload_data == True):
+            response = self._destinatario.recibir(1)
+        else:
+            response = payload_data
         information_page = self._respuesta.desarmar_respuesta(response)
         return information_page
 
@@ -210,11 +213,12 @@ class GetMemoryInformation(AbsComando):
         self._destinatario.conectar()
         self._destinatario.enviar(self._comando.paquete)
         information = self._destinatario.recibir(1)
+        print ("INFORMACION MEMORIA")
+        print (information)
         if information == [False]:
             self._destinatario.desenlazar()
             print ("Error al obtener información de memoria.")
             return
-        # self._respuesta.desarmar_respuesta(information)
         return self._respuesta.desarmar_respuesta(information)
 
 

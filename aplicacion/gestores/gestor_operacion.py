@@ -4,6 +4,8 @@ sys.path.append('../../')
 from infraestructura.interop.comando import Invocador
 from aplicacion.gestores.gestor_signal import SignalManager
 
+import time
+
 class GestorOperacion:
     """Este gestor tiene la responsabilidad de indicarle al dispositivo la operación
     o acción que debe comenzar o finalizar.
@@ -52,19 +54,28 @@ class GestorOperacion:
         file_date = self._invocador.ejecutar("descargar_archivo", file_number) # hora del archivo # en gestor download ?
         return file_date        
     
-    def get_information_file_page(self):
-        information_file_page = self._invocador.ejecutar("informacion_pagina_archivo") # datos de la pagina
+    def get_information_file_page(self, payload):
+        information_file_page = self._invocador.ejecutar("informacion_pagina_archivo", payload) # datos de la pagina
         return information_file_page
     
     def download_files(self):
         file_data = b''
+        # contador = 0
         while(True):
-            payload = self._invocador.ejecutar("descargar_datos_registro")
-            if payload == 'EOF':
-                break
+            # time.sleep(0.01)
+            datos = self._invocador.ejecutar("descargar_datos_registro")
+            if datos[1] == 'EOF':
+                # print (file_data, 'EOF DOWNLOAD FILES')
+                return file_data, datos [1]
+            if datos[1]:
+                # print (file_data, 'NEW PAGE')
+                # print (datos[0], 'pedido de otra página')
+                return file_data, datos[0]
             else:
-                file_data = file_data + payload        
-        return file_data, payload
+                # contador += 1
+                # print (contador)
+                file_data = file_data + datos[0]  
+        # return file_data, datos [0]
         
     # def get_information_file_page(self): #CONTIENE 2 ACCIONES DENTRO. REVISAR.
     #     samples_page = {}

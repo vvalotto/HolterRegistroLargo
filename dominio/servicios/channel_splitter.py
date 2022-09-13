@@ -21,7 +21,7 @@ def channel_splitter (register_data, page_samples, page_bytes):
         byte_number = 0
         channel_data = np.zeros ((page_samples[page_number]+1))
 
-        while byte_number < page_bytes[page_number][byte_number]:
+        while byte_number < page_bytes[page_number]: # [byte_number]:
             shift = 0
             result = 0
             while True:

@@ -1,4 +1,4 @@
-def decode_register_channels(self, register_data, channels_not_decodified):
+def decode_register_channels(register_data, channels_not_decodified):
     zigzag_dec_channels = []
     for page_number in range(len(register_data)):
         zigzag_dec = []

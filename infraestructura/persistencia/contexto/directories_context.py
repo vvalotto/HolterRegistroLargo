@@ -79,7 +79,7 @@ class DirectoryContext(GenericContext):
 
     def new_file(self, register_dto, date_init):
         
-        file_date = date_init.strftime("%H:%M:%S")
+        file_date = date_init.strftime("%H-%M-%S")
         
         filename = file_date + '.csv'
 

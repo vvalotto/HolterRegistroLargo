@@ -31,7 +31,6 @@ class RespuestaHolter(metaclass=ABCMeta):
         return self._correct_answer
         
     def _obtener_checksum(self, datos):
-        print (len(datos), datos)
         checksum = 0
         for i in range(self.PACKAGE_LENGTH - 1):
             checksum ^= datos[i]
@@ -154,8 +153,8 @@ class RespuestaDescargaArchivo(RespuestaHolter):
     def desarmar_respuesta(self, datos):
         
         self._desarmar_paquete(datos)
-        print ('header descarga archivo', self._header)
-        if self._header == b'\x67':
+        print ('TYPE descarga archivo', self._type)
+        if self._type.to_bytes(1, 'big') == b'\x67':
             try:
                 date_and_time = datetime(datos[8] + 2000, datos[7], datos[6], datos[4], datos[3], datos[2], 0)
                 print(date_and_time.strftime("Fecha y Hora: %d-%m-%Y %H:%M:%S"))
@@ -171,27 +170,32 @@ class RespuestaDescargaInformacionPagina(RespuestaHolter):
         self._desarmar_paquete(datos)
         if self._datos == self.EOF:
             return 'EOF'
-        if self._header != b'\x69':
-            print ('ERROR. Header de datos no reconocido')
-            return False
-
+        if (self._type.to_bytes(1, 'big') != b'\x69'):
+            print ('ERROR. TIPO de datos no reconocido')
+            return None
+        
         number_page = self._datos[2]
         amount_samples = self._datos[4]*256+self._datos[3] 
         # TODO: No esta como en el diagrama de secuencias. Sincronizar
         amount_bytes = self._datos[6]*256+self._datos[5]
-        
+        print(f"Página {number_page}: {amount_samples} muestras en {amount_bytes} bytes.")
         return [number_page, amount_samples, amount_bytes]
 
 
 class RespuestaDownloadRegisterData(RespuestaHolter):
     def desarmar_respuesta(self, datos):
-        self._desarmar_paquete(datos)
-        if self._datos == self.EOF:
-            return 'EOF'
-        if self._header == b'\x66':
-            return self._payload
+        try:
+            self._desarmar_paquete(datos)
+        except:
+            pass
+        if (self._datos == self.EOF):
+            return [self._datos, 'EOF']
+        if self._type.to_bytes(1, 'big') == b'\x66':
+            return [self._datos, False]
+        if self._type.to_bytes(1, 'big') == b'\x69':
+            return [self._datos, True]
         else:
-            print ('ERROR. Header de datos no reconocido')
+            print ('ERROR. Tipo de datos no reconocido')
             return False
 
 class RespuestaHolterBorrado(RespuestaHolter):
