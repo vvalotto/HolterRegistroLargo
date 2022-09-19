@@ -35,8 +35,8 @@ class AbsObserver(ABC):
 
 class MonitoreoSubject(AbsSubject):
 
-    _state: int = None 
-
+    # _state: int = None 
+    _state: None
     _observers: List[AbsObserver] = []
 
     def attach(self, observer : AbsObserver):
@@ -63,7 +63,7 @@ class MonitoreoSubject(AbsSubject):
         # self._state = randrange(0, 10)
 
         # print(f"Subject: My state has just changed to: {self._state}")
-        self._state = 1
+        self._state = True
         self.notify()
 
 

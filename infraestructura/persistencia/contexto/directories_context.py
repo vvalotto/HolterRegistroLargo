@@ -9,6 +9,9 @@ import numpy as np
 import tkinter as tk # TODO: Desacoplar interfaz de lógica. Generar acción desde la UI.
 from tkinter import filedialog
 
+import pandas as pd
+from datetime import datetime, timedelta
+
 class DirectoryContext(GenericContext):
     """ Especific context for create and manipulate directories
 
@@ -78,12 +81,30 @@ class DirectoryContext(GenericContext):
         return
 
     def new_file(self, register_dto, date_init):
+
+        file_date = date_init[0].strftime("%H-%M-%S")
+        for day in range(self._resource[1].day , 
+                            (self._resource[1].day + self._resource[2])):
+            if day == int (date_init[0].strftime("%d")): # deben estar correctamente sincronizadas las fechas del estudio con las del logging (holter)
+                print (len(self._path_days), self._path_days)
+                filename = self._path_days[day-self._resource[1].day]+'/' + file_date + '.csv'
+                break
         
-        file_date = date_init.strftime("%H-%M-%S")
-        
-        filename = file_date + '.csv'
+
+        sample_time = []
+        ts = 1/267
+        for i in range(0, date_init[1]):  
+            sample_time.append(datetime.isoformat((date_init[0] + timedelta(seconds=ts*i)),sep='T',timespec='auto'))
+
+        metadata=pd.Series([('sampling_frequency: 267'),('total_samples:{}').format(str(date_init[1])),('patient_name: sample_patient')])                
+        data_in_tuples = list(zip(sample_time,register_dto.channel_1,register_dto.channel_2,register_dto.channel_3))
+        pd_data_configuration = pd.DataFrame(data_in_tuples)
+        pd_data_configuration.columns = ['Timestamp','Canal 1','Canal 2','Canal 3']
 
         with open(filename, 'w') as csvfile:
-            np.savetxt(csvfile, [register_dto.channel_1, register_dto.channel_2,
-                                register_dto.channel_3], fmt='%s', delimiter=',', newline='\n')
+            metadata.to_csv(csvfile, header =None, index =None)
+            pd_data_configuration.to_csv(csvfile, index=None)
+            
+            # np.savetxt(csvfile, [register_dto.channel_1, register_dto.channel_2,
+            #                     register_dto.channel_3], fmt='%s', delimiter=',', newline='\n')
         

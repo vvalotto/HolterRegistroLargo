@@ -20,7 +20,8 @@ class GestorOperacion:
         while (monitor_ecg.state):
             channels = self._invocador.ejecutar("obtener_ecg_monitoreo")
             manager_signal.set_dto_channels(channels)
-        event_monitor.set()     
+        event_monitor.clear()
+        # event_monitor.set()     
         print ('fin del ciclo de adquisición')
 
     def set_current_time(self, current_time): # cambiar nombre a configurar holter
@@ -60,78 +61,13 @@ class GestorOperacion:
     
     def download_files(self):
         file_data = b''
-        # contador = 0
+
         while(True):
-            # time.sleep(0.01)
             datos = self._invocador.ejecutar("descargar_datos_registro")
             if datos[1] == 'EOF':
-                # print (file_data, 'EOF DOWNLOAD FILES')
                 return file_data, datos [1]
             if datos[1]:
-                # print (file_data, 'NEW PAGE')
-                # print (datos[0], 'pedido de otra página')
                 return file_data, datos[0]
             else:
-                # contador += 1
-                # print (contador)
-                file_data = file_data + datos[0]  
+                file_data = file_data + datos[0] # CAMBIO DE INDICES SE AGREGÓ [2:12]  
         # return file_data, datos [0]
-        
-    # def get_information_file_page(self): #CONTIENE 2 ACCIONES DENTRO. REVISAR.
-    #     samples_page = {}
-    #     bytes_page = {}
-    #     register_data = []
-    #     payload = None        
-    #     while(True): # lectura por pagina, se suponen 64 ciclos (64 páginas)
-    #         information_file_page = self._invocador.ejecutar("informacion_pagina_archivo") # datos de la pagina
-    #         # la idea es guardar los bytes y muestras por pagina - lista de bytes por pagina
-    #         if (information_file_page == 'EOF') or (payload == 'EOF'):
-    #             break
-    #         if information_file_page!=None:
-    #             samples_page[information_file_page[0]] = information_file_page[1]
-    #             bytes_page[information_file_page[0]] = information_file_page[2]
-    #             information_file_page = None
-            
-    #         file_data, payload = self.download_files()
-    #         register_data.append(file_data)
-    #     return register_data, samples_page, bytes_page
-
-    # def download_file(self):
-    #     # self._invocador.ejecutar("descargar_archivo", file_number) # hora del archivo # en gestor download ?
-        
-    #     samples_page = {}
-    #     bytes_page = {}
-    #     register_data = []
-    #     data = b''
-    #     payload = None
-        
-    #     while(True): # lectura por pagina, se suponen 64 ciclos (64 páginas)
-    #         information_file_page = self._invocador.ejecutar("informacion_pagina_archivo") # datos de la pagina
-    #         # la idea es guardar los bytes y muestras por pagina - lista de bytes por pagina
-    #         if (information_file_page == 'EOF') or (payload == 'EOF'):
-    #             break
-    #         if information_file_page!=None:
-    #             samples_page[information_file_page[0]] = information_file_page[1]
-    #             bytes_page[information_file_page[0]] = information_file_page[2]
-                
-    #             self._append_download_data = True
-    #             information_file_page = None
-
-    #         while(self._append_download_data):
-                
-    #             payload = self._invocador.ejecutar("descargar_datos_registro")
-    #             if payload == 'EOF':
-    #                 break
-    #             else:
-    #                 data = data + payload
-            
-    #         register_data.append(data)
-    #         data = b''
-    #         self._append_download_data = False
-
-    #     return register_data, samples_page, bytes_page
-            
-            # TODO: Pensar en un DTO y ENTIDAD. Mantener los datos en un lugar para que,
-            # llamando a otro método (almacenamiento/persistencia/save_csv) del gestor
-            # se guarden los datos en la estructura definida en archivos csv.
-        

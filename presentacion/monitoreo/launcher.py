@@ -106,29 +106,11 @@ class DeviceConnectorMode(QObject):
     def holter_connect(self, flag):
         self._flag = flag
         if flag:
-            manager_logging_init.logging_start()
+            # manager_logging_init.logging_start()
             gestor_vinculo.parar_holter()
-            # gestor_operacion.set_current_time()
-            # gestor_operacion.set_study_configuration()
-            # gestor_vinculo.obtener_status_holter()
-            # gestor_vinculo.parar_holter()
-            # gestor_operacion.start_logging_mode()
-            # gestor_vinculo.obtener_status_holter()
-            # time.sleep(3)
-            # gestor_vinculo.parar_holter()
-            # gestor_vinculo.set_download_mode()
-            # gestor_vinculo.obtener_status_holter()
-            # time.sleep(3)
-            # gestor_operacion.erase_holter_memory()
-            # gestor_vinculo.obtener_status_holter()
-
         else:
             gestor_vinculo.set_download_mode()
             DownloadConfigurator(invocador)
-            # gestor_vinculo.parar_holter()
-            # gestor_vinculo.desenlazar_holter()
-            # gestor_vinculo.set_download_mode()
-            # manager_download.start_download()
 
     @property
     def flag(self):
@@ -161,8 +143,8 @@ observer_a = ObserverMonitorDTO(monitor_ecg, ploter_1, ploter_2, ploter_3)
 monitor_subject.attach(observer_a)
 
 """ Invocador """
-link_usb = 'USB_CONNECTION'
-# link_usb = 'DONGLE_CONNECTION'
+# link_usb = 'USB_CONNECTION'
+link_usb = 'DONGLE_CONNECTION'
 monitor_ecg.link_type = link_usb
 
 # invocador = configurador_vinculo.init_invocator(link_usb)
@@ -190,8 +172,6 @@ def monitorear(monitor_ecg, lock_monitor,event_monitor):
 
     gestor_vinculo.poner_modo_monitoreo()
     gestor_operacion.monitorear_holter(monitor_ecg, lock_monitor,event_monitor)
-    # t_2.join()
-    # print (t_2.is_alive())
 
 def print_monitor(monitor_subjet,lock_monitor, event_monitor):
     while (monitor_ecg.state):
@@ -213,7 +193,6 @@ def iniciar_monitoreo():
                                                         event_monitor),daemon=True)
     t_1.start()
     t_2.start()
-
     
 if __name__ == "__main__":
     app = QApplication(sys.argv)

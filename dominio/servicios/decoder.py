@@ -26,11 +26,27 @@ def decode_register_channels(register_data, channels_not_decodified):
     ch_3 = []
 
     for page_number in range (int (len(register_data)/3)):
-        ch_1 = ch_1 +  ekg [page_number*3]
-        ch_2 = ch_2 +  ekg [page_number*3+1]
-        ch_3 = ch_3 +  ekg [page_number*3+2]
+        ch_1 = ch_1 + (list(map(lambda x: ((x/0xF30000 - 0.5)*2*2.4/3.5)*1000, ekg [page_number*3])))
+        # ch_1 = ch_1 +  ekg[page_number*3]
+        ch_2 = ch_2 + (list(map(lambda x: ((x/0xF30000 - 0.5)*2*2.4/3.5)*1000, ekg [page_number*3+1])))
+        # ch_2 = ch_2 +  ekg [page_number*3+1]
+        ch_3 = ch_3 + (list(map(lambda x: ((x/0xF30000 - 0.5)*2*2.4/3.5)*1000, ekg [page_number*3+2])))
+        # ch_3 = ch_3 +  ekg [page_number*3+2]
+    
 
-    # self._signal.channel_1 = ch_1.copy()
-    # self._signal.channel_2 = ch_2.copy()
-    # self._signal.channel_3 = ch_3.copy()
+
+        # for i in range (len(ekg[page_number*3])):
+        #     ch_1.append ((((ekg[page_number*3][i])/0xF30000 - 0.5)*2*2.4/3.5)*1000)
+
+
+
+    # ch_1 = list((lambda x: ((x/0xF30000 - 0.5)*2*2.4/3.5)*1000, ch_1))
+    # ch_2 = list((lambda x: ((x/0xF30000 - 0.5)*2*2.4/3.5)*1000, ch_2))
+    # ch_3 = list((lambda x: ((x/0xF30000 - 0.5)*2*2.4/3.5)*1000, ch_3))
+    # print (type(ch_1))
+    # print (len(ch_1))
+    # ch_1 = ((ch_1[:]/0xF30000 - 0.5)*2*2.4/3.5)*1000
+    # ch_2 = ((ch_1[:]/0xF30000 - 0.5)*2*2.4/3.5)*1000
+    # ch_3 = ((ch_1[:]/0xF30000 - 0.5)*2*2.4/3.5)*1000
+
     return [ch_1, ch_2, ch_3]

@@ -25,11 +25,3 @@ class SignalManager:
 
     def set_register_dto(self, register_data,channels_undecoded, channels):
         self._mapper_signal.data_register_to_dto(register_data,channels_undecoded, channels)
-        
-
-    # def save_register_channels(self, register_data, page_samples, page_bytes, file_number):
-    #     # mapper_signal podria tener un método que asigne register_data al atributo register_data del DTO, así 
-    #     # usarlo directamente desde el dto.
-    #     channels_not_decodified = self._mapper_signal.register_channels(self, register_data, page_samples, page_bytes) # Ya hecho con channel splitter. 
-    #     self._mapper_signal.decode_register_channels(self, register_data, channels_not_decodified)
-    #     self._mapper_signal.save_data_csv(file_number)

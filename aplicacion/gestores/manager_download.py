@@ -35,13 +35,15 @@ class DownloadManager:
             register_data = []
             datos = None    
             information_file_page = None
-            while(True): # lectura por pagina, se suponen 64 ciclos (64 páginas)
+            contador_muestras = 0
+            while(True): # lectura por pagina
                 if (information_file_page == 'EOF') or (datos == 'EOF'):
                     break
-                information_file_page = self._file_page_information(datos)
+                information_file_page = self.file_page_information(datos)
                 # la idea es guardar los bytes y muestras por pagina - lista de bytes por pagina
                 if information_file_page!=None:
                     samples_page[information_file_page[0]] = information_file_page[1]
+                    contador_muestras += information_file_page[1]
                     bytes_page[information_file_page[0]] = information_file_page[2]
 
                 file_data, datos = self._operation_manager.download_files()
@@ -49,13 +51,8 @@ class DownloadManager:
                 # if information_file_page[0] != 0:
                 register_data.append(file_data)
             # Fin de uso del gestor de operación.
-
-            # # # register_data, samples_page, bytes_page = self._operation_manager.download_file()
             
             # separador de canales sin decodificarlos
-            print (type (bytes_page))
-            print (len(bytes_page))
-            print (bytes_page)
             channels_undecoded = channel_splitter(register_data, samples_page, bytes_page) # Podría ser llamado por el gestor de señal.
             # decodificación de canales
             channels = decode_register_channels(register_data, channels_undecoded) # Podría ser llamado por el gestor de señal.
@@ -65,11 +62,9 @@ class DownloadManager:
 
             self._manager_signal.set_register_dto(register_data,channels_undecoded, channels)
 
-            self._repository.create(self._signal_dto, file_date)
+            self._repository.create(self._signal_dto, [file_date, contador_muestras])
 
-            # self._manager_signal.save_register_channels(register_data, samples_page, bytes_page, file_number, self._repository) # podría ir en otro hilo - *observer*
-
-    def _file_page_information(self, payload):
+    def file_page_information(self, payload):
         return self._operation_manager.get_information_file_page(payload)
 
     def _memory_information(self):

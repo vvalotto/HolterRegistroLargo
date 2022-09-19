@@ -189,9 +189,9 @@ class RespuestaDownloadRegisterData(RespuestaHolter):
         except:
             pass
         if (self._datos == self.EOF):
-            return [self._datos, 'EOF']
+            return [self._payload, 'EOF']
         if self._type.to_bytes(1, 'big') == b'\x66':
-            return [self._datos, False]
+            return [self._payload, False]
         if self._type.to_bytes(1, 'big') == b'\x69':
             return [self._datos, True]
         else:

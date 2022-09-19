@@ -11,6 +11,8 @@ from blatann.nrf import nrf_events
 from blatann.services import nordic_uart
 from blatann.gatt import MTU_SIZE_FOR_MAX_DLE
 
+import time
+
 
 class AbsEnlace(metaclass=ABCMeta):
     DEVICE_NAME = 'Holter_Bago'
@@ -128,7 +130,7 @@ class EnlaceUSB(AbsEnlace, ABC):
 
 
 class EnlaceDongle(AbsEnlace, ABC):
-
+    
     _uart_service = None
     _peer = None
     _ble_device = None
@@ -144,14 +146,14 @@ class EnlaceDongle(AbsEnlace, ABC):
         self._ble_device.open(clear_bonding_data=True)
 
         # Set scan duration for 4 seconds
-        self._ble_device.scanner.set_default_scan_params(timeout_seconds=4)
+        self._ble_device.scanner.set_default_scan_params(timeout_seconds=1)
         self._ble_device.set_default_peripheral_connection_params(7.5, 15, 4000)    
         target_address = None
         # Start scan and wait for it to complete
         scan_report = self._ble_device.scanner.start_scan().wait()
         # Search each peer's advertising data for the Nordic UART Service UUID to be advertised
         for report in scan_report.advertising_peers_found:
-            if report.device_name == self.DEVICE_NAME and report.peer_address == self.DEVICE_ADRESS:
+            if report.device_name == self.DEVICE_NAME: # and report.peer_address == self.DEVICE_ADRESS:
                 target_address = report.peer_address
                 break
         if not target_address:

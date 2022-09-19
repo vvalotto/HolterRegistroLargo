@@ -21,11 +21,12 @@ def channel_splitter (register_data, page_samples, page_bytes):
         byte_number = 0
         channel_data = np.zeros ((page_samples[page_number]+1))
 
-        while byte_number < page_bytes[page_number]: # [byte_number]:
+        while byte_number < page_bytes[page_number]:
             shift = 0
             result = 0
             while True:
-                val= int (register_data[page_number][byte_number]) #IMPORTANTE. Ver en generacion de register_data. Es probable que el índice no coincida con el nro de página
+                val= int (register_data[page_number][byte_number])  # IMPORTANTE. Ver en generacion de register_data. Es probable que el índice no coincida con el nro de página.
+                                                                    # Anda, pero depende de que sea correcta la generación de register_data. Punto de posibles fallos.
                 result |= (val & 0x7f) << shift
                 shift += 7
                 byte_number = byte_number + 1
