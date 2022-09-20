@@ -1,4 +1,5 @@
 from abc import abstractmethod, ABCMeta, ABC
+from distutils.util import change_root
 from importlib.resources import Package
 # from socket import timeout
 # import time
@@ -11,7 +12,7 @@ from blatann.nrf import nrf_events
 from blatann.services import nordic_uart
 from blatann.gatt import MTU_SIZE_FOR_MAX_DLE
 
-import time
+import datetime
 
 
 class AbsEnlace(metaclass=ABCMeta):
@@ -134,6 +135,7 @@ class EnlaceDongle(AbsEnlace, ABC):
     _uart_service = None
     _peer = None
     _ble_device = None
+    _change_data = False
 
     def conectar(self):
         # Open the BLE Device and suppress spammy log messages
@@ -181,11 +183,10 @@ class EnlaceDongle(AbsEnlace, ABC):
         # # # Initialize the service
         self._uart_service.initialize().wait(5)
         self._uart_service.on_data_received.register(self.on_data_rx)
-        # time.sleep(0.100)
 
     def enviar(self, datos):
         try:
-            self._uart_service.write(datos).wait(10)
+            self._uart_service.write(datos).wait(5)
             print('se enviaron los datos')
         except:
             print ("Error en 'enviar'. No se enviaron los datos")
@@ -194,6 +195,8 @@ class EnlaceDongle(AbsEnlace, ABC):
     def desconectar(self):
         try:
             # self._peer.disconnect().wait()
+            self._uart_service.on_data_received.clear_handlers()
+            self._uart_service.on_data_received.deregister(self.on_data_rx)
             self._ble_device.close()
             print ('ble_device se desconectó')
             self._restart_parameters()
@@ -206,14 +209,21 @@ class EnlaceDongle(AbsEnlace, ABC):
     def recibir(self, amount_packages):
 
         try:
-            print ('recibir', len(self._datos))
+            
             if not float.is_integer(len(self._datos)/self.PACKAGE_LENGTH):
                 print ('Se perdieron datos. Se reiniciará la conexión')
                 self.desconectar()
                 return [False]
+                
+            while (not self._change_data):
+                pass
+            self._change_data = False
         except:
             pass
+        # time.sleep(0.1)
         return self._datos
     
     def on_data_rx(self, service, data):
         self._datos = data
+        self._change_data = True
+        
