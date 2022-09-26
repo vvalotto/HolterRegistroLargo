@@ -2,7 +2,6 @@
 import os
 from pathlib import Path
 import sys
-from telnetlib import DO
 
 
 sys.path.append('../../')

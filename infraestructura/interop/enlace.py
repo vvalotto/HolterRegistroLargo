@@ -214,13 +214,12 @@ class EnlaceDongle(AbsEnlace, ABC):
                 print ('Se perdieron datos. Se reiniciará la conexión')
                 self.desconectar()
                 return [False]
-                
-            while (not self._change_data):
+            cicle_limit = 0
+            while (not self._change_data)and(cicle_limit<1000):
                 pass
             self._change_data = False
         except:
             pass
-        # time.sleep(0.1)
         return self._datos
     
     def on_data_rx(self, service, data):
