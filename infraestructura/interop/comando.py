@@ -1,3 +1,10 @@
+"""
+COMMANDS
+========
+
+    In this module is implemented the Pattern Command. In this pattern, are extracted all 
+"""
+
 from abc import ABCMeta, abstractmethod
 from infraestructura.interop.holter_comands import *
 from infraestructura.interop.holter_responses import *
@@ -56,18 +63,6 @@ class LectorConfiguracionHolter(AbsComando):
             return
 
         return self._respuesta.desarmar_respuesta(configuracion)
-        
-
-class IdentificadorHolter(AbsComando):
-    pass
-
-
-class ObtenerEventos(AbsComando):
-    pass
-
-
-class ObtenerEGC(AbsComando):
-    pass
 
 
 class SetHolterTime(AbsComando):
@@ -331,5 +326,3 @@ class Invocador:
             return recibido
         else:
             raise 'Comando no reconocido'
-    
-    

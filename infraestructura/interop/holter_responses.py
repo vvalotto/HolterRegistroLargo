@@ -1,7 +1,5 @@
 from abc import ABCMeta, abstractmethod
 from datetime import datetime
-from telnetlib import DO
-# from termios import TIOCPKT_DOSTOP
 
 class RespuestaHolter(metaclass=ABCMeta):
     

@@ -1,8 +1,6 @@
 from abc import abstractmethod, ABCMeta, ABC
 from distutils.util import change_root
 from importlib.resources import Package
-# from socket import timeout
-# import time
 
 import serial
 from serial.tools.list_ports import comports
@@ -11,8 +9,6 @@ from blatann import BleDevice
 from blatann.nrf import nrf_events
 from blatann.services import nordic_uart
 from blatann.gatt import MTU_SIZE_FOR_MAX_DLE
-
-import datetime
 
 
 class AbsEnlace(metaclass=ABCMeta):

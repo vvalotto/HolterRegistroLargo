@@ -3,6 +3,12 @@ from infraestructura.interop.holter_comands import *
 from infraestructura.interop.holter_responses import *
 
 class InvocatorInit:
+    """
+    This class initializes a calling object with a single connection type
+    and registers all commands for communication with the device.
+    Each command record action needs an associated command that contains a
+    Holter command and a response command.
+    """
 
     def __init__(self, connection_type):
         

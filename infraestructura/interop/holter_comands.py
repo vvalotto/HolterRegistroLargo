@@ -1,3 +1,21 @@
+"""
+Holter Commands
+===============
+
+    This module contains the methods to assemble the commands to be
+    sent to the device to perform the desired task.
+      Each command is constituted for a:
+          - Header
+          - Types
+          - Pyload
+          - Checksum
+
+      The process is started with a call to some command object, values
+      are assigned to the header, types and pyload attributes and checksum
+      (with the 'obtain_checksum' method).
+"""
+
+
 from abc import ABCMeta, abstractmethod
 import dateutil.parser
 from datetime import timedelta
@@ -42,6 +60,13 @@ class ComandEmpty(ComandoHolter):
 
 
 class ComandoLecturaStatusEnvio(ComandoHolter):
+    """
+    This 'command' object generates the sequence that will be sent
+    to request device status.
+
+    Args:
+        ComandoHolter (abstract class): Inheritance
+    """
 
     def armar_comando(self, payload=None):
         self._header = b'\xa5'
@@ -51,6 +76,13 @@ class ComandoLecturaStatusEnvio(ComandoHolter):
  
 
 class ComandoLecturaConfiguracionEnvio(ComandoHolter):
+    """
+    This 'command' object generates the sequence that will be sent
+    to request device configuration.
+
+    Args:
+        ComandoHolter (abstract class): Inheritance
+    """
 
     def armar_comando(self, payload=None):
         self._header = b'\xa5'
@@ -60,7 +92,13 @@ class ComandoLecturaConfiguracionEnvio(ComandoHolter):
 
 
 class ComandoEscrituraModoIdleEnvio(ComandoHolter):
-    
+    """
+    This 'command' object generates the sequence that will be sent
+    to set device 'IDLE' mode.
+
+    Args:
+        ComandoHolter (abstract class): Inheritance
+    """
     def armar_comando(self, payload=None):
         self._header = b'\xa5'
         self._type = b'\x81'
@@ -69,7 +107,13 @@ class ComandoEscrituraModoIdleEnvio(ComandoHolter):
 
 
 class ComandoEscrituraModoMonitoreoEnvio(ComandoHolter):
-    
+    """
+    This 'command' object generates the sequence that will be sent
+    to set device 'MONITOR' mode.
+
+    Args:
+        ComandoHolter (abstract class): Inheritance
+    """
     def armar_comando(self, payload=None):
         self._header = b'\xa5'
         self._type = b'\x81'
@@ -78,7 +122,13 @@ class ComandoEscrituraModoMonitoreoEnvio(ComandoHolter):
 
 
 class CommandWriteTime(ComandoHolter):
-    
+    """
+    This 'command' object generates the sequence that will be sent
+    to set device date.
+
+    Args:
+        ComandoHolter (abstract class): Inheritance
+    """
     def armar_comando(self, payload):
         
         current_time = payload        
@@ -113,7 +163,13 @@ class CommandWriteTime(ComandoHolter):
 
 
 class CommandWriteConfig(ComandoHolter):
-    
+    """
+    This 'command' object generates the sequence that will be sent
+    to set device configuration.
+
+    Args:
+        ComandoHolter (abstract class): Inheritance
+    """
     STUDY_TIME = 7200  # minutes // QUE SEA ATRIBUTO DE LA ENTIDAD "ESTUDIO"
 
     def armar_comando(self, payload=None):
@@ -138,7 +194,13 @@ class CommandWriteConfig(ComandoHolter):
 
 
 class CommandLoggingMode(ComandoHolter):
-    
+    """
+    This 'command' object generates the sequence that will be sent
+    to set device 'LOGGING' mode.
+
+    Args:
+        ComandoHolter (abstract class): Inheritance
+    """
     def armar_comando(self, payload=None):
         self._header = b'\xa5'
         self._type = b'\x81'
@@ -147,7 +209,13 @@ class CommandLoggingMode(ComandoHolter):
 
 
 class CommandDownloadMode(ComandoHolter):
-    
+    """
+    This 'command' object generates the sequence that will be sent
+    to set device 'DOWNLOAD' mode.
+
+    Args:
+        ComandoHolter (abstract class): Inheritance
+    """
     def armar_comando(self, payload=None):
         self._header = b'\xa5'
         self._type = b'\x81'
@@ -156,6 +224,13 @@ class CommandDownloadMode(ComandoHolter):
 
 
 class CommandDownloadFile(ComandoHolter):
+    """
+    This 'command' object generates the sequence that will be sent
+    to request a file download.
+
+    Args:
+        ComandoHolter (abstract class): Inheritance
+    """
     def armar_comando(self, payload=None):
         file_number = payload
 
@@ -170,6 +245,13 @@ class CommandDownloadFile(ComandoHolter):
 
 
 class CommandMemoryInformation(ComandoHolter):
+    """
+    This 'command' object generates the sequence that will be sent
+    to request a memory information.
+
+    Args:
+        ComandoHolter (abstract class): Inheritance
+    """
     def armar_comando(self, payload = None):
         self._header = b'\xa5'
         self._type = b'\x62'
@@ -178,6 +260,13 @@ class CommandMemoryInformation(ComandoHolter):
 
 
 class CommandEraseMemory(ComandoHolter):
+    """
+    This 'command' object generates the sequence that will be sent
+    to request the memory clear.
+
+    Args:
+        ComandoHolter (abstract class): Inheritance
+    """
 
     def armar_comando(self, payload = None):
         self._header = b'\xa5'
