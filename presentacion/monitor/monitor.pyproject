@@ -1,4 +1,4 @@
 {
-    "files": ["main.py", "main_monitor.qml", "pages/MonitorPage.qml","pages/MonitorPage.qml",
+    "files": ["main_monitor.py", "main_monitor.qml", "pages/MonitorPage.qml","pages/MonitorPage.qml",
     "pages/PatientPage.qml", "pages/HolterPage.qml","pages/StudyPage.qml"]
 }

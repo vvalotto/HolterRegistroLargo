@@ -7,11 +7,10 @@ Item {
 
     Rectangle {
         id: contentPacient
-        property var patientHeader: ["Nombre", "Apellido", "DNI", "Fecha de Nacimiento", "Obra Social", "Número de Afiliado", "Número de Teléfono", "Domicilio", "N Historia Clínica", "Institución", "Médico Solicitante", "Prescripciones", "Enfermedades preexistentes"]
-
+        radius: 10
         Text {
             id: titlePaciente
-            color: "#666666"
+            color: "#518c89"
             text: qsTr("Paciente")
             anchors.left: parent.left
             anchors.top: parent.top
@@ -38,9 +37,8 @@ Item {
             radius: 6
             border.color: "#930089"
             border.width: 5
-
             anchors.top: descriptionPatient.bottom
-            anchors.topMargin: 100
+            anchors.topMargin: 60
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 60
             anchors.left: parent.left
@@ -49,72 +47,6 @@ Item {
             anchors.leftMargin: 30
             color: "transparent"
 
-            GridLayout {
-                id: grid
-                anchors.fill: parent
-                rows: 13
-                rowSpacing: 1
-                columnSpacing: 1
-                anchors.margins: 4
-
-                // example models
-                property var titles: ["Nombre", "Apellido", "DNI", "Fecha de Nacimiento", "Obra Social", "Número de Afiliado", "Número de Teléfono", "Domicilio", "N Historia Clínica", "Institución", "Médico Solicitante", "Prescripciones", "Enfermedades preexistentes"]
-                property var values: ["Nombre", "Apellido", "DNI", "Fecha de Nacimiento", "Obra Social", "Número de Afiliado", "Número de Teléfono", "Domicilio", "N Historia Clínica", "Institución", "Médico Solicitante", "Prescripciones", "Enfermedades preexistentes"]
-
-                Repeater {
-                    model: grid.titles
-
-                    Rectangle {
-                        Layout.row: 0
-                        Layout.column: index
-                        Layout.fillWidth: false
-                        Layout.fillHeight: false
-                        // anchors.top: parent.top
-                        height: 40
-                        Text {
-                            text: modelData
-                            font.family: "Calibri Light"
-                            font.pointSize: 12.5
-                            color: "black"
-                            font.bold: true
-                            // font.italic: true
-                            // verticalAlignment: Text.AlignVCenter
-                            // wrapMode: Text.Wrap
-                            fontSizeMode: Text.VerticalFit
-                            horizontalAlignment: Text.AlignHCenter
-                            lineHeight: 15
-                            wrapMode: Text.WrapAnywhere
-                        }
-                    }
-                }
-                Repeater {
-                    model: grid.values
-                    Rectangle {
-                        id: datos
-                        Layout.row: 2
-                        Layout.column: index
-                        height: 40
-
-                        Layout.fillWidth: false
-                        Layout.fillHeight: true
-
-                        Text {
-
-                            text: modelData
-                            font.family: "Calibri Light"
-                            font.pointSize: 12.5
-                            color: "black"
-                            // font.bold: true
-                            font.italic: true
-                            // verticalAlignment: Text.AlignVtop
-                            wrapMode: Text.Wrap
-                            fontSizeMode: Text.HorizontalFit
-                            horizontalAlignment: Text.AlignHCenter
-                            lineHeight: 15
-                        }
-                    }
-                }
-            }
         }
         color: "#f6f6f6"
         anchors.fill: parent

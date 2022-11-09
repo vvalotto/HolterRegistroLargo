@@ -83,7 +83,7 @@ class EnlaceUSB(AbsEnlace, ABC):
             pass
 
         try:
-            self._puerto = serial.Serial('COM8',115200, timeout = 2)
+            self._puerto = serial.Serial('COM3',115200, timeout = 2)
             # print (self._puerto)
             print ('Puerto enlazado')
         except:

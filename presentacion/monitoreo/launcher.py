@@ -3,16 +3,13 @@ import os
 from pathlib import Path
 import sys
 
-
 sys.path.append('../../')
 
-#from PySide6.QtGui import QGuiApplication hola
 from PySide6.QtQml import QQmlApplicationEngine
-from PySide6.QtCore import QObject, Slot, Signal, QPointF#, QTimer,
+from PySide6.QtCore import QObject, Slot, Signal, QPointF
 from PySide6.QtWidgets import QApplication
-from PySide6.QtCharts import QAbstractSeries #, QDateTimeAxis
-
-# from zmq import EVENT_CLOSE_FAILED
+from PySide6.QtGui import QIcon
+from PySide6.QtCharts import QAbstractSeries 
 
 from aplicacion.gestores.gestor_vinculo import GestorVinculo
 from aplicacion.gestores.gestor_operacion import GestorOperacion
@@ -24,24 +21,29 @@ from infraestructura.interop import configurador_vinculo
 
 from presentacion.monitoreo.download_configurator import DownloadConfigurator
 
-# import time
 from aplicacion.DTOs.monitor_DTO import MonitorDTO
-# from signal_EKG import MonitorECG
 
 """ Implementación Patrón observer y Threding para caso de Monitoreo """
 from dominio.servicios.observer import *
 from threading import Thread
 from threading import Lock
 from threading import Event
-# from vinculo_DTO import MonitoreoDTO
 
+gestor_vinculo = None
+monitor_ecg = None
+manager_logging_init = None
+manager_download = None
+invocador = None
+gestor_operacion = None
+
+t_1 = []
+t_2 = []
 
 class Plotter(QObject):
 
     send = Signal(bool)
     _view_buffer_data = []
     _buffer_data = []
-
 
     def __init__(self):
         super().__init__()
@@ -52,7 +54,6 @@ class Plotter(QObject):
         self._Vref = 2.4
         self._new_data = []
         self.__generate_buffer_data()
-
 
     def filter(self):
         #filtrar datos en self._channel_1
@@ -93,23 +94,27 @@ class DeviceConnectorMode(QObject):
     global gestor_vinculo
     global monitor_ecg
     global manager_logging_init
-    global manager_download
-    global invocador
+    # global manager_download
+    holter_connected = Signal(bool)
+    total_files = Signal (int)
+    downloaded_files = Signal(int)
 
     def __init__(self, event) -> None:
         super().__init__()
         self._signal_to_connect = event
         self._flag = False
 
-    @Slot(bool)
-    def holter_connect(self, flag):
+    @Slot(bool, int)
+    def holter_connect(self, flag, conection_type):
+        print (conection_type)
         self._flag = flag
         if flag:
-            # manager_logging_init.logging_start()
+            aplication_init(conection_type)
             gestor_vinculo.parar_holter()
-        else:
-            gestor_vinculo.set_download_mode()
-            DownloadConfigurator(invocador)
+            self.holter_connected.emit(True)
+        else:     
+            gestor_vinculo.desenlazar_holter()
+            self.holter_connected.emit(False)           
 
     @property
     def flag(self):
@@ -122,7 +127,98 @@ class DeviceConnectorMode(QObject):
             iniciar_monitoreo()   
         else:
             gestor_vinculo.parar_holter()
+            global t_1
+            global t_2
+            t_2.join()
+            t_1.join()
 
+    @Slot()
+    def loggin_init(self):
+        global manager_logging_init
+        manager_logging_init.logging_start()
+    
+    @Slot()
+    def download_init(self):
+        t_3 = Thread(target=download_thread, args=(self.total_files, self.downloaded_files),daemon=True)
+        t_3.start()
+        
+
+def download_thread(total_files, downloaded_files):
+    global invocador
+
+    aplication_init('USB_CONNECTION')
+    gestor_vinculo.set_download_mode()
+
+    download_subject = DownloadSubject()
+    download_observer = DownloadInterfaceObserver(total_files, downloaded_files)
+    download_subject.attach(download_observer)
+    
+    DownloadConfigurator(invocador, download_subject)
+
+def aplication_init(conection_type):
+    global gestor_vinculo
+    global monitor_ecg
+    global manager_logging_init
+    global manager_download
+    global invocador
+    global gestor_operacion
+
+
+    """ Invocador """
+    if conection_type == 0:
+        link_usb = 'DONGLE_CONNECTION'
+    else:
+        link_usb = 'USB_CONNECTION'
+    monitor_ecg.link_type = link_usb
+
+    invocador_init = configurador_vinculo.InvocatorInit(link_usb)
+
+    invocador = invocador_init.invocador
+
+    """ Manager Logging Init """
+
+    manager_logging_init = LoggingManager(invocador)
+
+    """ Gestor de vínculo """
+
+    gestor_vinculo = GestorVinculo(invocador)
+
+    """ Gestor de operación """
+
+    gestor_operacion = GestorOperacion(invocador)
+
+    """ Manager Download """
+
+def monitorear(monitor_ecg, lock_monitor,event_monitor):
+    global gestor_operacion
+
+    gestor_vinculo.poner_modo_monitoreo()
+    gestor_operacion.monitorear_holter(monitor_ecg, lock_monitor,event_monitor)
+
+def print_monitor(monitor_subjet, lock_monitor, event_monitor):
+    global monitor_ecg
+
+    while (monitor_ecg.state):
+        event_monitor.wait()
+        with lock_monitor:
+            if  not monitor_ecg.state: # puede ser que esté de más.
+                break
+            monitor_subjet.some_business_logic() # directamente puede ser notify
+            event_monitor.clear()
+
+def iniciar_monitoreo():
+    global monitor_subject
+    global t_1
+    global t_2
+    """ Threading: evento y bloqueo """
+    event_monitor = Event()
+    lock_monitor = Lock()   
+    t_1 = Thread(target=monitorear, args=(monitor_ecg, lock_monitor,
+                                                        event_monitor), daemon=True)
+    t_2 = Thread(target=print_monitor, args=(monitor_subject,lock_monitor,
+                                                        event_monitor),daemon=True)
+    t_1.start()
+    t_2.start()
 
 """ Objeto graficador"""
 event_con= Event()
@@ -141,68 +237,18 @@ observer_a = ObserverMonitorDTO(monitor_ecg, ploter_1, ploter_2, ploter_3)
 
 monitor_subject.attach(observer_a)
 
-""" Invocador """
-# link_usb = 'USB_CONNECTION'
-link_usb = 'DONGLE_CONNECTION'
-monitor_ecg.link_type = link_usb
-
-# invocador = configurador_vinculo.init_invocator(link_usb)
-
-invocador_init = configurador_vinculo.InvocatorInit(link_usb)
-
-invocador = invocador_init.invocador
-
-""" Manager Logging Init """
-
-manager_logging_init = LoggingManager(invocador)
-
-""" Gestor de vínculo """
-
-gestor_vinculo = GestorVinculo(invocador)
-
-""" Gestor de operación """
-
-gestor_operacion = GestorOperacion(invocador)
-
-""" Manager Download """
-# manager_download = DownloadManager(invocador)
-
-def monitorear(monitor_ecg, lock_monitor,event_monitor):
-
-    gestor_vinculo.poner_modo_monitoreo()
-    gestor_operacion.monitorear_holter(monitor_ecg, lock_monitor,event_monitor)
-
-def print_monitor(monitor_subjet,lock_monitor, event_monitor):
-    while (monitor_ecg.state):
-        event_monitor.wait()
-        with lock_monitor:
-            if  not monitor_ecg.state: # puede ser que esté de más.
-                break
-            monitor_subjet.some_business_logic() # directamente puede ser notify
-            event_monitor.clear()
-
-def iniciar_monitoreo():
-    
-    """ Threading: evento y bloqueo """
-    event_monitor = Event()
-    lock_monitor = Lock()   
-    t_1 = Thread(target=monitorear, args=(monitor_ecg, lock_monitor,
-                                                        event_monitor), daemon=True)
-    t_2 = Thread(target=print_monitor, args=(monitor_subject,lock_monitor,
-                                                        event_monitor),daemon=True)
-    t_1.start()
-    t_2.start()
-    
 if __name__ == "__main__":
     app = QApplication(sys.argv)
+    app.setWindowIcon(QIcon('../monitor/resources/images/icono.PNG' ))
     engine = QQmlApplicationEngine()
-    engine.load(os.fspath(Path(__file__).resolve().parent / "../monitor/main_monitor.qml"))
 
+    engine.load(os.fspath(Path(__file__).resolve().parent / "../monitor/main.qml"))
+    
     engine.rootObjects()[0].setProperty('plotter', ploter_1)
     engine.rootObjects()[0].setProperty('plotter2', ploter_2)
     engine.rootObjects()[0].setProperty('plotter3', ploter_3)
     engine.rootObjects()[0].setProperty('connector', connector)
-    
+
     if not engine.rootObjects():
         sys.exit(-1)
     sys.exit(app.exec())

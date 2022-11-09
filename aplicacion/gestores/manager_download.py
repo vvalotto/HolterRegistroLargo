@@ -4,6 +4,7 @@ from aplicacion.DTOs.register_DTO import RegisterDTO
 
 from dominio.servicios.channel_splitter import channel_splitter
 from dominio.servicios.decoder import decode_register_channels
+from dominio.servicios.observer import DownloadObserver
 
 
 class DownloadManager:
@@ -16,18 +17,23 @@ class DownloadManager:
         #TODO: VER. En el repositorio que le asigno ya le paso un mapeador de señal, que se encuentra en persistencia. 
         self._repository = None
 
+        self.subject = None
+        self.amount_files = 0
+        self.file_number = 0
+
     def start_download(self):
         # amount_files = self._operation_manager.get_memory_information() # Pasarle este dato al repositorio?. Para control de descarga..
         amount_files = self._memory_information()
         # ahora se implementa el de descarga/captura de archivos
         # se debe pedir de a un archivo. para esto se envia a armar 
         # comando el dato del nro de archivo que se pide
-
-        for file_number in range(1,amount_files): # TODO: Luego de corregir el firmware se debe sumar uno a amount_files
+        self.amount_files = amount_files
+        for file_number in range(1, amount_files): # TODO: Luego de corregir el firmware se debe sumar uno a amount_files
             # El dispositivo comienza a entregar los archivos desde el nro 1
             # adquiere los datos de un archivo desde el dispositivo
             # Hora del archivo
-            print (file_number, 'NUMERO DE ARCHIVO')
+            print (file_number, 'NUMERO DE ARCHIVO', self.amount_files)
+            self.file_number = file_number
             file_date = self._operation_manager.get_file_time(file_number)
             # Datos por página de archivo
             samples_page = {}
@@ -63,6 +69,8 @@ class DownloadManager:
             self._manager_signal.set_register_dto(register_data,channels_undecoded, channels)
 
             self._repository.create(self._signal_dto, [file_date, contador_muestras])
+
+            self.subject.notify()
 
     def file_page_information(self, payload):
         return self._operation_manager.get_information_file_page(payload)

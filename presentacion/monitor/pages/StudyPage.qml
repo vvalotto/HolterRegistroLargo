@@ -5,9 +5,10 @@ import QtQuick.Layouts
 Item {
             
             Rectangle {
+                radius: 10
                 Text {
                     id: titleEstudio
-                    color: "#666666"
+                    color: "#518c89"
                     text: qsTr("Estudio")
                     font.bold: true
                     font.pixelSize: 30
@@ -29,6 +30,23 @@ Item {
                     anchors.leftMargin: 0
                     anchors.bottomMargin: -80
                 }
+
+            Rectangle {
+            id: tablePatient
+            radius: 6
+            border.color: "#930089"
+            border.width: 5
+            anchors.top: descriptionStudy.bottom
+            anchors.topMargin: 60
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 60
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.rightMargin: 30
+            anchors.leftMargin: 30
+            color: "transparent"
+
+        }
                 color: "#f6f6f6"
                 anchors.fill: parent
             }

@@ -1,6 +1,5 @@
 from infraestructura.persistencia.contexto.context import GenericContext
 from dateutil import parser
-# from datetime import datetime
 
 import os
 from math import ceil
@@ -89,7 +88,9 @@ class DirectoryContext(GenericContext):
                 print (len(self._path_days), self._path_days)
                 filename = self._path_days[day-self._resource[1].day]+'/' + file_date + '.csv'
                 break
-        
+            else: 
+                filename = "C:/Users/sandr/OneDrive/Escritorio/Holter Bago 2022-10-25"+'/' + file_date + '.csv'
+                break      
 
         sample_time = []
         ts = 1/267
@@ -100,11 +101,7 @@ class DirectoryContext(GenericContext):
         data_in_tuples = list(zip(sample_time,register_dto.channel_1,register_dto.channel_2,register_dto.channel_3))
         pd_data_configuration = pd.DataFrame(data_in_tuples)
         pd_data_configuration.columns = ['Timestamp','Canal 1','Canal 2','Canal 3']
-
+    
         with open(filename, 'w') as csvfile:
             metadata.to_csv(csvfile, header =None, index =None)
             pd_data_configuration.to_csv(csvfile, index=None)
-            
-            # np.savetxt(csvfile, [register_dto.channel_1, register_dto.channel_2,
-            #                     register_dto.channel_3], fmt='%s', delimiter=',', newline='\n')
-        

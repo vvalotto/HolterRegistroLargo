@@ -4,7 +4,6 @@ from random import randrange
 from typing import List
 
 
-
 class AbsSubject(ABC):
 
     """ Tema """
@@ -98,20 +97,60 @@ class ObserverMonitorDTO(AbsObserver):
         self.ploter_3.update_buffer_data()
 
 
-# if __name__ == "__main__":
-#     # The client code.
+class DownloadSubject(AbsSubject):
 
-#     subject = MonitoreoSubjet()
+    _state: None
+    _observers: List[AbsObserver] = []
 
-#     observer_a = ObserverMonitorDOT()
-#     subject.attach(observer_a)
+    def attach(self, observer : AbsObserver):
+        print("Download Subject: Attached an observer.")
+        self._observers.append(observer)      
+    
+    def detach(self, observer : AbsObserver):
+        self._observers.remove(observer)
 
-#     subject.some_business_logic()
-#     subject.some_business_logic()
+    def notify(self):
+        print("Download Subject: Notifying observers...")
+        if self._observers[0].flag:
+            self._observers[0].update(self)
+            self._observers[1].downloaded_files = self._observers[0].downloaded_files
+            self._observers[1].amount_files = self._observers[0].amount_files
+            self._observers[1].update(self)
+        else:
+            self._observers[1].update(self)
+            self._observers[0].downloaded_files = self._observers[1].downloaded_files
+            self._observers[0].amount_files = self._observers[1].amount_files
+            self._observers[0].update(self)
 
-#     subject.some_business_logic()
+        
+        # for observer in self._observers:
+        #     observer.update(self)
 
 
-#     subject.detach(observer_a)
+class DownloadObserver(AbsObserver):
+    def __init__(self, download_observer) -> None:
+        self.flag = True
+        self.download_observer = download_observer
+        self.amount_files = 0
+        self.downloaded_files = 0
 
-#     subject.some_business_logic()
+    def update(self, subject: DownloadSubject) -> None:
+        print("Download Observer: Reacted to the event")
+        self.amount_files = self.download_observer.amount_files
+        self.downloaded_files = self.download_observer.file_number
+
+
+class DownloadInterfaceObserver(AbsObserver):
+    def __init__(self,total_files, downloaded_files ) -> None:
+        self.flag = False
+        self.total_files_signal = total_files
+        self.downloaded_files_signal = downloaded_files
+        self.amount_files = 0
+        self.downloaded_files = 0
+
+    def update(self, subject: DownloadSubject) -> None:
+        print("Download int Observer: Reacted to the event")
+        self.total_files_signal.emit(self.amount_files)
+        print ('emit total:', self.amount_files )
+        self.downloaded_files_signal.emit(self.downloaded_files)
+        print ('emit archivo:', self.downloaded_files )
