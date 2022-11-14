@@ -42,6 +42,7 @@ Item {
             transparentBorder: true
             radius: 10
         }
+
         Rectangle {
             id: signalsPlotArea
             color: "#f9f9f9"
@@ -57,27 +58,29 @@ Item {
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 60
             ////////////////////////
+            ///////////////////////////////////////
+
             Rectangle {
                 id: recChannel1
                 color: "#f9f9f9"
                 radius: 5
                 border.color: "#00060000"
                 border.width: 6
-                height: parent.height/3
+                height: parent.height/3-10
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.top: parent.top
                 // anchors.bottom: parent.bottom
                 anchors.rightMargin: 4
                 anchors.leftMargin: 30
-                anchors.topMargin: 4
+                anchors.topMargin: 15
                 // anchors.bottomMargin: parent.height - parent.height / 3 - 10
 
                 ChartView {
                     id: channel
+                    anchors.fill: parent
                     legend.visible: false
                     backgroundColor: "transparent"
-                    anchors.fill: parent
 
                     // anchors.left: parent.left
                     // anchors.right: parent.right
@@ -115,32 +118,44 @@ Item {
                                 axisX, axisY)
                 }
                 FastBlur {
-                    anchors.fill: channel
+                    id: fastBlur2
                     source: channel
                     radius: 20
+                    anchors.fill: parent
+
+                    Label {
+                        id: dev1
+                        color: "#6f6f6f"
+                        text: qsTr("DI")
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.left: parent.left
+                        anchors.leftMargin: 8
+                        font.italic: true
+                        font.pointSize: 11
+                    }
                 }
             }
-            ///////////////////////////////////////
+
             Rectangle {
                 id: rectChannel2
                 color: "#f9f9f9"
                 radius: 5
-                height: recChannel1.height
+                height: parent.height/3-10
                 border.color: "#00060000"
                 border.width: 6
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.top: recChannel1.bottom
-                anchors.topMargin: -20
+                anchors.topMargin: 0
                 anchors.rightMargin: 4
                 anchors.leftMargin: 30
                 // anchors.bottomMargin: parent.height / 3
 
                 ChartView {
                     id: channel2
+                    anchors.fill: parent
                     legend.visible: false
                     backgroundColor: "transparent"
-                    anchors.fill: parent
                     // anchors.left: parent.left
                     // anchors.right: parent.right
 
@@ -177,9 +192,21 @@ Item {
                                 axisX2, axisY2)
                 }
                 FastBlur {
-                    anchors.fill: channel2
+                    id: fastBlur1
                     source: channel2
                     radius: 20
+                    anchors.fill: parent
+
+                    Label {
+                        id: dev2
+                        color: "#6f6f6f"
+                        text: qsTr("DII")
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.left: parent.left
+                        anchors.leftMargin: 8
+                        font.pointSize: 11
+                        font.italic: true
+                    }
                 }
             }
             //////////////////////////////////////
@@ -187,23 +214,23 @@ Item {
                 id: rectChannel3
                 color: "#f9f9f9"
                 radius: 5
-                height: recChannel1.height
+                height: parent.height/3-10
                 border.color: "#00060000"
                 border.width: 6
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.top: rectChannel2.bottom
-                anchors.topMargin: -20
+                anchors.topMargin: 0
                 anchors.rightMargin: 4
                 anchors.leftMargin: 30
                 // anchors.bottomMargin: parent.height / 3
 
                 ChartView {
                     id: channel3
+                    anchors.fill: parent
                     legend.visible: false
                     backgroundColor: "transparent"
-                    anchors.fill: parent
-                      ValuesAxis {
+                    ValuesAxis {
                         id: axisX3
                         visible: false
                         min: 0.0
@@ -233,10 +260,34 @@ Item {
                                 axisX3, axisY3)
                 }
                 FastBlur {
-                    anchors.fill: channel3
+                    id: fastBlur
                     source: channel3
                     radius: 20
+                    anchors.fill: parent
+
+                    Label {
+                        id: dev3
+                        color: "#6f6f6f"
+                        text: qsTr("V1")
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.left: parent.left
+                        anchors.leftMargin: 8
+                        font.pointSize: 11
+                        font.italic: true
+                    }
                 }
+            }
+
+            Label {
+                id: amplitudLabel
+                y: 79
+                color: "#727272"
+                text: qsTr("Amplitud: ( -1.5 ; 1.5 )")
+                anchors.left: scaleRect.right
+                anchors.bottom: parent.bottom
+                font.pointSize: 9
+                anchors.bottomMargin: 10
+                anchors.leftMargin: 20
             }
 
             Rectangle {
@@ -264,13 +315,15 @@ Item {
                     anchors.leftMargin: 0
                     anchors.topMargin: 0
                     UpArrowButton{
-                    onClicked: {axisY3.min = axisY3.min+0.5
-                        axisY3.max= axisY3.max - 0.5
-                        axisY2.min = axisY2.min+0.5
-                        axisY2.max= axisY2.max - 0.5
-                        axisY.min = axisY.min+0.5
-                        axisY.max= axisY.max - 0.5}
-                }
+                        onClicked: {axisY3.min = axisY3.min+0.5
+                            axisY3.max= axisY3.max - 0.5
+                            axisY2.min = axisY2.min+0.5
+                            axisY2.max= axisY2.max - 0.5
+                            axisY.min = axisY.min+0.5
+                            axisY.max= axisY.max - 0.5
+                            amplitudLabel.text = qsTr("Amplitud: (")+ axisY.min.toFixed(2) +qsTr("; ") +axisY.max.toFixed(2) + qsTr(")")
+                            }
+                    }
                 }
 
                 Rectangle {
@@ -286,15 +339,18 @@ Item {
                     anchors.rightMargin: 0
                     DownArrowButton{
                         anchors.fill: pantent.anchors
-                    onClicked: {axisY3.min = axisY3.min-0.5
-                        axisY3.max= axisY3.max + 0.5
-                        axisY2.min = axisY2.min-0.5
-                        axisY2.max= axisY2.max + 0.5
-                        axisY.min = axisY.min-0.5
-                        axisY.max= axisY.max + 0.5}
-                }
+                        onClicked: {axisY3.min = axisY3.min-0.5
+                            axisY3.max= axisY3.max + 0.5
+                            axisY2.min = axisY2.min-0.5
+                            axisY2.max= axisY2.max + 0.5
+                            axisY.min = axisY.min-0.5
+                            axisY.max= axisY.max + 0.5
+                            amplitudLabel.text = qsTr("Amplitud: (")+ axisY.min.toFixed(2) +qsTr("; ") +axisY.max.toFixed(2) + qsTr(")")
+                            }
+                    }
                 }
             }
+
 
 
         }
@@ -444,10 +500,11 @@ Item {
                 anchors.leftMargin: 2
             }
         }
+
     }
 }
 /*##^##
 Designer {
-    D{i:0;autoSize:true;height:480;width:640}D{i:24}
+    D{i:0;autoSize:true;height:480;width:640}D{i:12}D{i:19}D{i:26}D{i:27}
 }
 ##^##*/
