@@ -71,6 +71,7 @@ class DownloadManager:
             self._repository.create(self._signal_dto, [file_date, contador_muestras])
 
             self.subject.notify()
+        self.subject.notify()
 
     def file_page_information(self, payload):
         return self._operation_manager.get_information_file_page(payload)

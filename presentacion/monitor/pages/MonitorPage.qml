@@ -73,7 +73,7 @@ Item {
                 // anchors.bottom: parent.bottom
                 anchors.rightMargin: 4
                 anchors.leftMargin: 30
-                anchors.topMargin: 15
+                anchors.topMargin: 4
                 // anchors.bottomMargin: parent.height - parent.height / 3 - 10
 
                 ChartView {
@@ -99,8 +99,8 @@ Item {
                     ValuesAxis {
                         id: axisY
                         visible: true
-                        min: 3.4
-                        max: 4.1
+                        min: -1.5
+                        max: 1.5
                         // gridLineColor: 'red'
                         // shadesVisible: true
                     }
@@ -173,8 +173,8 @@ Item {
                     ValuesAxis {
                         id: axisY2
                         visible: true
-                        min: 3
-                        max: 4.7
+                        min: -1.5
+                        max: 1.5
                         // gridLineColor: 'red'
                         // shadesVisible: true
                     }
@@ -241,8 +241,8 @@ Item {
                     ValuesAxis {
                         id: axisY3
                         visible: true
-                        min: 6.0
-                        max: 6.8
+                        min: -1.5
+                        max: 1.5
                         // gridLineColor: 'red'
                         // shadesVisible: true
                     }
@@ -295,11 +295,11 @@ Item {
                 color: "#00ffffff"
                 border.width: 0
                 anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.top: parent.top
+                anchors.right: parent.left
+                anchors.top: parent.bottom
                 anchors.bottom: parent.bottom
-                anchors.rightMargin: parent.width-30
-                anchors.topMargin: 4
+                anchors.rightMargin: -75
+                anchors.topMargin: -35
                 anchors.bottomMargin: 4
                 anchors.leftMargin: 4
 
@@ -315,6 +315,7 @@ Item {
                     anchors.leftMargin: 0
                     anchors.topMargin: 0
                     UpArrowButton{
+                        btnIconSource: "../resources/icons/plus.svg"
                         onClicked: {axisY3.min = axisY3.min+0.5
                             axisY3.max= axisY3.max - 0.5
                             axisY2.min = axisY2.min+0.5
@@ -338,7 +339,10 @@ Item {
                     anchors.leftMargin: 0
                     anchors.rightMargin: 0
                     DownArrowButton{
+                        anchors.left: parent.left
                         anchors.fill: pantent.anchors
+                        btnIconSource: "../resources/icons/minus.svg"
+                        anchors.leftMargin: 35
                         onClicked: {axisY3.min = axisY3.min-0.5
                             axisY3.max= axisY3.max + 0.5
                             axisY2.min = axisY2.min-0.5
@@ -505,6 +509,6 @@ Item {
 }
 /*##^##
 Designer {
-    D{i:0;autoSize:true;height:480;width:640}D{i:12}D{i:19}D{i:26}D{i:27}
+    D{i:0;autoSize:true;height:480;width:640}
 }
 ##^##*/

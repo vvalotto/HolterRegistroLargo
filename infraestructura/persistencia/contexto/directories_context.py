@@ -44,9 +44,9 @@ class DirectoryContext(GenericContext):
     def _directory_create(self):
         self._select_location()
         if self._path == '':
-            self._path =  self._resource[0] +' '+ str(self._resource[1].date())
+            self._path =  self._resource[0] +''+ str(self._resource[1].date())
         else:
-            self._path =  self._path + '/'+ self._resource[0] +' '+ str(self._resource[1].date())
+            self._path =  self._path + '/'+ self._resource[0] +''+ str(self._resource[1].date())
         
         if self._directory_exist():
             print ('ERROR. El directorio ya existe.')
@@ -88,9 +88,9 @@ class DirectoryContext(GenericContext):
                 print (len(self._path_days), self._path_days)
                 filename = self._path_days[day-self._resource[1].day]+'/' + file_date + '.csv'
                 break
-            else: 
-                filename = "C:/Users/sandr/OneDrive/Escritorio/Holter Bago 2022-10-25"+'/' + file_date + '.csv'
-                break      
+            # else: 
+            #     filename = "C:/Users/sandr/OneDrive/Escritorio/Holter Bago 2022-10-25"+'/' + file_date + '.csv'
+            #     break      
 
         sample_time = []
         ts = 1/267

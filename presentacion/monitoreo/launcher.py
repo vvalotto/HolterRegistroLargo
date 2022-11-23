@@ -5,6 +5,9 @@ import sys
 
 sys.path.append('../../')
 
+# procesamiento de monitoreo 
+from dominio.servicios.procesamiento import BandpassMonitorFilter, NotchMonitorFilter
+
 from PySide6.QtQml import QQmlApplicationEngine
 from PySide6.QtCore import QObject, Slot, Signal, QPointF
 from PySide6.QtWidgets import QApplication
@@ -55,6 +58,11 @@ class Plotter(QObject):
         self._new_data = []
         self.__generate_buffer_data()
 
+        # Filtros
+        self._band_pass_m=BandpassMonitorFilter(0.67,40,263,4)
+        self._notch_m=NotchMonitorFilter(30,20,263)
+
+
     def filter(self):
         #filtrar datos en self._channel_1
         pass
@@ -62,10 +70,20 @@ class Plotter(QObject):
     def data_update(self):
         self._new_data = []
         #def filter
+        data_to_filter = []
+
         for i in range (0, len(self._channel_1)):
             dato_int = self._channel_1[i][0]*65536+self._channel_1[i][1]*256+self._channel_1[i][2]
             dato = ((dato_int/self._ADCmax-0.5)*2*self._Vref/3.5)*1000
-            self._new_data.append(QPointF(i,dato))
+            data_to_filter.append(dato)
+            # self._new_data.append(QPointF(i,dato))
+        
+        bandpass_filtered=self._band_pass_m.filter(data_to_filter)
+        notch_filtered=self._notch_m.filter(bandpass_filtered)
+
+        for i in range(0,len(notch_filtered)):    
+            self._new_data.append(QPointF(i,notch_filtered[i]))
+
 
     def __generate_buffer_data(self, time_view = 1600):
         self._buffer_data = [QPointF(i,0) for i in range(0,time_view)]
@@ -92,6 +110,7 @@ class Plotter(QObject):
 
 class DeviceConnectorMode(QObject):
     global gestor_vinculo
+    global gestor_operacion
     global monitor_ecg
     global manager_logging_init
     # global manager_download
@@ -135,7 +154,12 @@ class DeviceConnectorMode(QObject):
     @Slot()
     def loggin_init(self):
         global manager_logging_init
+        gestor_vinculo.set_download_mode()
+        print ("MODO DESCARGA")
+        gestor_operacion.erase_holter_memory()
+        print ("FIN BORRADO DE MEMORIA")
         manager_logging_init.logging_start()
+        print ("INICIO DE ESTUDIO")
     
     @Slot()
     def download_init(self):
@@ -239,7 +263,7 @@ monitor_subject.attach(observer_a)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    app.setWindowIcon(QIcon('../monitor/resources/images/icono.PNG' ))
+    app.setWindowIcon(QIcon('../monitor/resources/images/icono.PNG'))
     engine = QQmlApplicationEngine()
 
     engine.load(os.fspath(Path(__file__).resolve().parent / "../monitor/main.qml"))

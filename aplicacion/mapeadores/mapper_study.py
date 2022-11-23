@@ -29,7 +29,7 @@ class StudyMapper:
         fileName = "./study_configuration_data.json"
         jsonObject = {
             "time_init": str(current_time),#current_time.strftime('%S/%M/%H'), # datetime to string
-            "time_stop": 7200,
+            "time_stop": 4320,
             "channels": 3,
             "events_type_byte_1": 0,
             "events_type_byte_2": 0,

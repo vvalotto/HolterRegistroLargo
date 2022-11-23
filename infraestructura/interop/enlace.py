@@ -10,6 +10,8 @@ from blatann.nrf import nrf_events
 from blatann.services import nordic_uart
 from blatann.gatt import MTU_SIZE_FOR_MAX_DLE
 
+import re
+import subprocess
 
 class AbsEnlace(metaclass=ABCMeta):
     DEVICE_NAME = 'Holter_Bago'
@@ -43,30 +45,26 @@ class AbsEnlace(metaclass=ABCMeta):
         self._peer = None
         self._ble_device = None
 
-    def listar_puertos_series(self):
-        print (comports)
+    def _listar_puertos_series(self):
         puertos = list(comports())
         for puerto in puertos:
-            print (puerto, "puerto")
+            # print (puerto.description[:], "description")
+            print (puerto.name, "name")
         return puertos
 
-# # # for port in serial.tools.list_ports.comports():
-# # #     if "0403:6001" in port.hwid:
-# # #         right_com = port.device
-
-# # # #Se abre la conexión hacia el puerto serial
-
-# # # dvk_bl654 = serial.Serial(right_com,115200,timeout=2)
-
-    def nombre_puerto(puertos):
+    def _nombre_puerto(puertos):
         try:
             for i in puertos:
                 try: 
-                    puerto = serial.Serial(i, 115200)
+                    print(i.name)
+                    puerto = serial.Serial(i.name, 115200, timeout = 2)
                     if puerto.read(12) == b'\xa5\x0a\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00':
-                        return i
+                        name = i.name
+                        puerto.close()
+                        return name
                     else:
                         print (i[0], ': Puerto incorrecto')
+                    puerto.close()
                 except: 
                     pass
         except: 
@@ -74,7 +72,7 @@ class AbsEnlace(metaclass=ABCMeta):
 
 
 class EnlaceUSB(AbsEnlace, ABC):
-    
+
     def conectar(self):
         try:
             if self._puerto.isOpen():
@@ -83,7 +81,9 @@ class EnlaceUSB(AbsEnlace, ABC):
             pass
 
         try:
-            self._puerto = serial.Serial('COM3',115200, timeout = 2)
+            ports = self._listar_puertos_series()
+            print (ports[0].name, type(ports[0].name))
+            self._puerto = serial.Serial(ports[0].name,115200, timeout = 2) #COM 3 PLACA DESARROLLO
             # print (self._puerto)
             print ('Puerto enlazado')
         except:
@@ -135,7 +135,9 @@ class EnlaceDongle(AbsEnlace, ABC):
 
     def conectar(self):
         # Open the BLE Device and suppress spammy log messages
-        self._ble_device = BleDevice('COM5')
+        ports = self._listar_puertos_series()
+        print (ports[0].name, type(ports[0].name))
+        self._ble_device = BleDevice(ports[0].name) #5
         self._ble_device.event_logger.suppress(nrf_events.GapEvtAdvReport)
         # Configure the BLE device to support MTU sizes which allow the max data length extension PDU size
         # Note this isn't 100% necessary as the default configuration sets the max to this value also

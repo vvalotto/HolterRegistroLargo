@@ -25,7 +25,7 @@ class DownloadConfigurator:
         self._study_manager = StudyManager(self._study)
         study_information = self._study_manager.get_study_configuration()
         # Inicialización de repositorio y creación de directorios
-        resource = ['Holter Bago', study_information [0], study_information [1]]
+        resource = ['Holter_Bago', study_information [0], study_information [1]]
         download_repository = SignalRegisterRepository(DirectoryContext(resource), RegisterDataMapper())
         # Vínculo con dispositivo Holter
         self._gestor_vinculo = GestorVinculo(invocator)

@@ -39,14 +39,14 @@ class MonitoreoSubject(AbsSubject):
     _observers: List[AbsObserver] = []
 
     def attach(self, observer : AbsObserver):
-        print("Subject: Attached an observer.")
+        # print("Subject: Attached an observer.")
         self._observers.append(observer)      
     
     def detach(self, observer : AbsObserver):
         self._observers.remove(observer)
 
     def notify(self):
-        print("Subject: Notifying observers...")
+        # print("Subject: Notifying observers...")
         for observer in self._observers:
             observer.update(self)
 
@@ -77,9 +77,9 @@ class ObserverMonitorDTO(AbsObserver):
         self.ploter_3._channel_1 = self._ecg_monitor.channel_3
 
     def update(self, subject: MonitoreoSubject) -> None:
-        print("ConcreteObserverA: Reacted to the event")
-        print ('Vincular con el presentador')
-        print ('OBSERVADOR')
+        # print("ConcreteObserverA: Reacted to the event")
+        # print ('Vincular con el presentador')
+        # print ('OBSERVADOR')
 
         self.ploter._channel_1 = self._ecg_monitor._channel_1
         self.ploter.data_update()
@@ -103,14 +103,14 @@ class DownloadSubject(AbsSubject):
     _observers: List[AbsObserver] = []
 
     def attach(self, observer : AbsObserver):
-        print("Download Subject: Attached an observer.")
+        # print("Download Subject: Attached an observer.")
         self._observers.append(observer)      
     
     def detach(self, observer : AbsObserver):
         self._observers.remove(observer)
 
     def notify(self):
-        print("Download Subject: Notifying observers...")
+        # print("Download Subject: Notifying observers...")
         if self._observers[0].flag:
             self._observers[0].update(self)
             self._observers[1].downloaded_files = self._observers[0].downloaded_files
@@ -135,7 +135,7 @@ class DownloadObserver(AbsObserver):
         self.downloaded_files = 0
 
     def update(self, subject: DownloadSubject) -> None:
-        print("Download Observer: Reacted to the event")
+        # print("Download Observer: Reacted to the event")
         self.amount_files = self.download_observer.amount_files
         self.downloaded_files = self.download_observer.file_number
 
@@ -149,8 +149,8 @@ class DownloadInterfaceObserver(AbsObserver):
         self.downloaded_files = 0
 
     def update(self, subject: DownloadSubject) -> None:
-        print("Download int Observer: Reacted to the event")
+        # print("Download int Observer: Reacted to the event")
         self.total_files_signal.emit(self.amount_files)
-        print ('emit total:', self.amount_files )
-        self.downloaded_files_signal.emit(self.downloaded_files)
-        print ('emit archivo:', self.downloaded_files )
+        # print ('emit total:', self.amount_files )
+        self.downloaded_files_signal.emit(self.downloaded_files+1)
+        # print ('emit archivo:', self.downloaded_files )

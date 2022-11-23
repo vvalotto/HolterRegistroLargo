@@ -195,7 +195,7 @@ class PonerModoMonitoreo(AbsComando):
 
 class GetECGMonitor(AbsComando):
     def ejecutar(self, payload_data = None):
-        print ('Datos de GetECG')
+        # print ('Datos de GetECG')
         datos_ecg_monitoreo = self._destinatario.recibir(1)
         return self._respuesta.desarmar_respuesta(datos_ecg_monitoreo)
 
